@@ -1,45 +1,11 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
-<<<<<<< HEAD
-import org.hibernate.annotations.ColumnDefault;
-
-=======
->>>>>>> e2bd19b (Product Controller added)
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product")
 public class Product {
-<<<<<<< HEAD
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Prod_Id", nullable = false)
-    private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "CatMaster_Id", nullable = false)
-    private Catmaster catMaster;
-
-    @Column(name = "Prod_Name", nullable = false, length = 150)
-    private String prodName;
-
-    @Column(name = "Prod_Short_Desc")
-    private String prodShortDesc;
-
-    @Column(name="prod_long_desc", columnDefinition = "TEXT")
-    private String prodLongDesc;
-
-    @Column(name = "MRP_Price", precision = 10, scale = 2)
-    private BigDecimal mrpPrice;
-
-    @Column(name = "Cardholder_Price", precision = 10, scale = 2)
-    private BigDecimal cardholderPrice;
-
-    @ColumnDefault("0")
-    @Column(name = "Points_2B_Redeem")
-    private Integer points2bRedeem;
-=======
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,7 +52,6 @@ public class Product {
     }
 
     // ---------------- Getters & Setters ----------------
->>>>>>> e2bd19b (Product Controller added)
 
     public Integer getId() {
         return id;
@@ -96,21 +61,12 @@ public class Product {
         this.id = id;
     }
 
-<<<<<<< HEAD
-    public Catmaster getCatMaster() {
-        return catMaster;
-    }
-
-    public void setCatMaster(Catmaster catMaster) {
-        this.catMaster = catMaster;
-=======
     public Integer getCategoryId() {
         return categoryId;
     }
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
->>>>>>> e2bd19b (Product Controller added)
     }
 
     public String getProdName() {
@@ -153,17 +109,6 @@ public class Product {
         this.cardholderPrice = cardholderPrice;
     }
 
-<<<<<<< HEAD
-    public Integer getPoints2bRedeem() {
-        return points2bRedeem;
-    }
-
-    public void setPoints2bRedeem(Integer points2bRedeem) {
-        this.points2bRedeem = points2bRedeem;
-    }
-
-}
-=======
     public Integer getPointsToBeRedeem() {
         return pointsToBeRedeem;
     }
@@ -172,4 +117,3 @@ public class Product {
         this.pointsToBeRedeem = pointsToBeRedeem;
     }
 }
->>>>>>> e2bd19b (Product Controller added)
