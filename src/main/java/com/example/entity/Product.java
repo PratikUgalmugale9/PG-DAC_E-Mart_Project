@@ -27,8 +27,7 @@ public class Product {
     @Column(name = "Prod_Short_Desc")
     private String prodShortDesc;
 
-    @Lob
-    @Column(name = "Prod_Long_Desc")
+    @Column(name="prod_long_desc", columnDefinition = "TEXT")
     private String prodLongDesc;
 
     @Column(name = "MRP_Price", precision = 10, scale = 2)
