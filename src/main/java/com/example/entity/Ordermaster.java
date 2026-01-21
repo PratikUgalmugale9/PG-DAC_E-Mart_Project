@@ -3,8 +3,6 @@ package com.example.entity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -14,16 +12,15 @@ public class Ordermaster {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "order_date")
+    @Column(name = "order_date", insertable = false, updatable = false)
     private Instant orderDate;
+
 
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
@@ -83,4 +80,4 @@ public class Ordermaster {
         this.paymentMode = paymentMode;
     }
 
-}
+}	
