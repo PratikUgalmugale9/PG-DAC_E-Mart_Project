@@ -1,3 +1,20 @@
+# =========================
+# Monorepo (Custom Added)
+# =========================
+
+# Java backend build folders
+java/backend/target/
+java/backend/bin/
+
+# Eclipse / IDE files inside backend
+java/backend/.classpath
+java/backend/.project
+java/backend/.settings/
+
+# =========================
+# Maven / Spring (Default)
+# =========================
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
