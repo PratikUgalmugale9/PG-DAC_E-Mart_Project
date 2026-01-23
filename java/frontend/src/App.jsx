@@ -1,11 +1,17 @@
-import './App.css'
+import React from 'react';
+import './App.css';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import Footer from './components/Footer';
 import Login from './pages/Login';
-
 
 function App() {
   return (
-    <div>
-      <Login />
+    <div className="App">
+      {/* <Login /> */}
+      <Navbar />
+      <HomePage />
+      <Footer />
     </div>
   );
 }
