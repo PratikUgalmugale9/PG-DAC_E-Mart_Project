@@ -1,122 +1,113 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
 
-/* Reset & Base */
+/* Page Container */
 .login-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  /* Deep Blue Modern Gradient */
   font-family: 'Outfit', sans-serif;
-  overflow: hidden;
-  position: relative;
+  overflow-y: auto;
+  padding: 40px 20px;
 }
 
-/* Optional: Add a subtle mesh or orb for extra flair */
-.login-container::before {
-  content: '';
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 50%;
-  height: 50%;
-  background: radial-gradient(circle, rgba(118, 75, 162, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
-  filter: blur(60px);
-  z-index: 0;
-}
-
-.login-container::after {
-  content: '';
-  position: absolute;
-  bottom: -10%;
-  right: -10%;
-  width: 50%;
-  height: 50%;
-  background: radial-gradient(circle, rgba(0, 210, 255, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
-  filter: blur(60px);
-  z-index: 0;
-}
-
-/* Flip Animation Structure */
+/* Flip Wrapper */
 .flip-container {
-  perspective: 1000px;
-  width: 100%;
-  height: 100vh;
-  /* Container takes full height to center the flipper */
+  perspective: 1200px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Flipper */
 .flipper {
   width: 400px;
-  /* Explicit width */
-  height: 600px;
-  /* Explicit height to accommodate the tallest form (Registration) */
-  transition: 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform-style: preserve-3d;
   position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease, height 0.3s ease;
 }
 
+/* Rotate when flipped */
 .flip-container.flipped .flipper {
   transform: rotateY(180deg);
 }
 
+/* Front & Back Faces */
 .front,
 .back {
   width: 100%;
-  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
+
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+
   display: flex;
   flex-direction: column;
 }
 
+/* Back face rotated */
 .back {
   transform: rotateY(180deg);
 }
 
-/* Modifying Login Card to fit inside faces */
+/* Z-INDEX CONTROL (THIS FIXES DEFAULT BUG 🔥) */
+.front {
+  z-index: 2;
+  /* Login visible first */
+}
+
+.back {
+  z-index: 1;
+}
+
+.flip-container.flipped .front {
+  z-index: 1;
+}
+
+.flip-container.flipped .back {
+  z-index: 2;
+  /* Register visible after click */
+}
+
+/* Card UI */
 .login-card {
   width: 100%;
-  height: 100%;
-  position: relative;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
   padding: 40px;
   border-radius: 20px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* Center content vertically inside the card */
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+/* Header */
 .login-header {
   text-align: center;
   margin-bottom: 30px;
 }
 
 .login-title {
-  color: #1a1a1a;
   font-size: 28px;
   font-weight: 600;
-  margin: 0;
+  color: #1a1a1a;
   margin-bottom: 8px;
 }
 
 .login-subtitle {
-  color: #666;
   font-size: 14px;
-  margin: 0;
+  color: #666;
 }
 
+/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -141,7 +132,7 @@
   border: 1px solid #ddd;
   border-radius: 10px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
   background: #f9f9f9;
 }
 
@@ -151,6 +142,7 @@
   background: #fff;
 }
 
+/* Button */
 .login-btn {
   padding: 14px;
   font-size: 16px;
@@ -160,7 +152,7 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: 0.2s ease;
   margin-top: 10px;
 }
 
@@ -169,10 +161,7 @@
   box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
 }
 
-.login-btn:active {
-  transform: translateY(0);
-}
-
+/* Footer */
 .login-footer {
   margin-top: 25px;
   text-align: center;
@@ -188,10 +177,15 @@
   font-weight: 600;
   cursor: pointer;
   margin-left: 5px;
-  transition: color 0.2s;
 }
 
 .register-text span:hover {
-  color: #1e3c72;
   text-decoration: underline;
+}
+
+/* Errors */
+.error-message {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 5px;
 }

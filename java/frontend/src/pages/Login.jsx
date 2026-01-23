@@ -1,16 +1,90 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "../styles/Login.css";
 
 function Login() {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [containerHeight, setContainerHeight] = useState(600); // Default start height
+
+  const frontRef = useRef(null);
+  const backRef = useRef(null);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // Registration States
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
+  const [regMobile, setRegMobile] = useState("");
+  const [regAddress, setRegAddress] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [errors, setErrors] = useState({});
+
+  // Update height when flip state changes
+  useEffect(() => {
+    const updateHeight = () => {
+      const currentRef = isFlipped ? backRef : frontRef;
+      if (currentRef.current) {
+        // Add some padding/buffer if needed, or just use offsetHeight
+        setContainerHeight(currentRef.current.offsetHeight);
+      }
+    };
+
+    // Small timeout to ensure DOM is ready/transitions start
+    const timer = setTimeout(updateHeight, 50);
+
+    // Also update on resize
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateHeight);
+    }
+  }, [isFlipped]);
+
+  const validateForm = () => {
+    let newErrors = {};
+    let isValid = true;
+
+    if (!regName.trim()) {
+      newErrors.name = "Full Name is required";
+      isValid = false;
+    } else if (regName.trim().length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+      isValid = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regEmail || !emailRegex.test(regEmail)) {
+      newErrors.email = "Valid Email is required";
+      isValid = false;
+    }
+
+    const mobileRegex = /^\d{10,15}$/;
+    if (!regMobile || !mobileRegex.test(regMobile)) {
+      newErrors.mobile = "Mobile must be 10-15 digits";
+      isValid = false;
+    }
+
+    if (!regAddress.trim()) {
+      newErrors.address = "Address is required";
+      isValid = false;
+    }
+
+    if (regPassword.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    if (regPassword !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -20,21 +94,25 @@ function Login() {
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
-    if (regPassword !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+    if (validateForm()) {
+      console.log("Register Name:", regName);
+      console.log("Register Email:", regEmail);
+      console.log("Register Mobile:", regMobile);
+      console.log("Register Address:", regAddress);
+      console.log("Register Password:", regPassword);
+      // Proceed with API call
     }
-    console.log("Register Name:", regName);
-    console.log("Register Email:", regEmail);
-    console.log("Register Password:", regPassword);
   };
 
   return (
     <div className="login-container">
       <div className={`flip-container ${isFlipped ? "flipped" : ""}`}>
-        <div className="flipper">
+        <div
+          className="flipper"
+          style={{ height: `${containerHeight}px` }}
+        >
           {/* Front Side - Login */}
-          <div className="front">
+          <div className="front" ref={frontRef}>
             <div className="login-card">
               <div className="login-header">
                 <h2 className="login-title">Welcome Back</h2>
@@ -80,7 +158,7 @@ function Login() {
           </div>
 
           {/* Back Side - Registration */}
-          <div className="back">
+          <div className="back" ref={backRef}>
             <div className="login-card">
               <div className="login-header">
                 <h2 className="login-title">Create Account</h2>
@@ -96,8 +174,8 @@ function Login() {
                     placeholder="John Doe"
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
-                    required
                   />
+                  {errors.name && <span className="error-message">{errors.name}</span>}
                 </div>
 
                 <div className="input-group">
@@ -108,8 +186,32 @@ function Login() {
                     placeholder="name@example.com"
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    required
                   />
+                  {errors.email && <span className="error-message">{errors.email}</span>}
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="reg-mobile">Mobile Number</label>
+                  <input
+                    id="reg-mobile"
+                    type="tel"
+                    placeholder="1234567890"
+                    value={regMobile}
+                    onChange={(e) => setRegMobile(e.target.value)}
+                  />
+                  {errors.mobile && <span className="error-message">{errors.mobile}</span>}
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="reg-address">Address</label>
+                  <input
+                    id="reg-address"
+                    type="text"
+                    placeholder="123 Main St, City"
+                    value={regAddress}
+                    onChange={(e) => setRegAddress(e.target.value)}
+                  />
+                  {errors.address && <span className="error-message">{errors.address}</span>}
                 </div>
 
                 <div className="input-group">
@@ -120,8 +222,8 @@ function Login() {
                     placeholder="Create a password"
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
-                    required
                   />
+                  {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
 
                 <div className="input-group">
@@ -132,8 +234,8 @@ function Login() {
                     placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
                   />
+                  {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
                 </div>
 
                 <button type="submit" className="login-btn">

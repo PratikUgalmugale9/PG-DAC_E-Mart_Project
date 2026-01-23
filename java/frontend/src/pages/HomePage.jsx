@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from '../components/Header';
-import styles from './HomePage.module.css';
+import styles from '../styles//HomePage.module.css';
 
 const HomePage = () => {
     const categories = [
