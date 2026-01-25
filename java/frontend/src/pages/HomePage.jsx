@@ -1,6 +1,8 @@
 import React from 'react';
 import AdBanner from '../components/AdBanner';
 import styles from '../styles/HomePage.module.css';
+import Header from '../components/Header';
+import styles from '../styles//HomePage.module.css';
 
 const HomePage = () => {
     const categories = [
