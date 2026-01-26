@@ -1,35 +1,45 @@
 import React from 'react';
+import Navbar from '../components/Navbar';
+import CategoryBar from '../components/CategoryBar';
 import AdBanner from '../components/AdBanner';
+import Footer from '../components/Footer';
 import styles from '../styles/HomePage.module.css';
-// import Header from '../components/Header';
-// import styles from '../styles//HomePage.module.css';
 
 const HomePage = () => {
-    const categories = [
-        { id: 1, name: 'Electronics', img: 'https://placehold.co/300x200?text=Electronics' },
-        { id: 2, name: 'Fashion', img: 'https://placehold.co/300x200?text=Fashion' },
-        { id: 3, name: 'Home & Living', img: 'https://placehold.co/300x200?text=Home' },
-        { id: 4, name: 'Beauty', img: 'https://placehold.co/300x200?text=Beauty' }
+    // Dummy Data for Product Sections (kept from previous version or enhanced)
+    const topCategories = [
+        { id: 1, name: 'Mobiles', img: 'https://placehold.co/150x150?text=Mobiles' },
+        { id: 2, name: 'Fashion', img: 'https://placehold.co/150x150?text=Fashion' },
+        { id: 3, name: 'Electronics', img: 'https://placehold.co/150x150?text=Electronics' },
+        { id: 4, name: 'Home', img: 'https://placehold.co/150x150?text=Home' },
+        { id: 5, name: 'Beauty', img: 'https://placehold.co/150x150?text=Beauty' },
+        { id: 6, name: 'Appliances', img: 'https://placehold.co/150x150?text=Appliances' }
     ];
 
     const products = [
-        { id: 1, name: 'Wireless Headphones', price: '$99.99', img: 'https://placehold.co/300x300?text=Headphones' },
-        { id: 2, name: 'Smart Watch', price: '$149.99', img: 'https://placehold.co/300x300?text=Watch' },
-        { id: 3, name: 'Running Shoes', price: '$79.99', img: 'https://placehold.co/300x300?text=Shoes' },
-        { id: 4, name: 'Laptop Backpack', price: '$45.00', img: 'https://placehold.co/300x300?text=Backpack' },
-        { id: 5, name: 'Gaming Mouse', price: '$59.99', img: 'https://placehold.co/300x300?text=Mouse' }
+        { id: 1, name: 'Wireless Headphones', price: '$99.99', img: 'https://placehold.co/200x200?text=Headphones' },
+        { id: 2, name: 'Smart Watch', price: '$149.99', img: 'https://placehold.co/200x200?text=Watch' },
+        { id: 3, name: 'Running Shoes', price: '$79.99', img: 'https://placehold.co/200x200?text=Shoes' },
+        { id: 4, name: 'Laptop Backpack', price: '$45.00', img: 'https://placehold.co/200x200?text=Backpack' },
+        { id: 5, name: 'Gaming Mouse', price: '$59.99', img: 'https://placehold.co/200x200?text=Mouse' },
+        { id: 6, name: 'Bluetooth Speaker', price: '$39.99', img: 'https://placehold.co/200x200?text=Speaker' }
     ];
 
     return (
-        <div>
-            <AdBanner />
+        <div className={styles.pageWrapper}>
+            <Navbar />
+            <CategoryBar />
 
-            <div className={styles.homeContainer}>
-                {/* Categories Section */}
+            <div className={styles.mainContent}>
+                <AdBanner />
+
                 <section className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Top Categories</h2>
+                    <div className={styles.sectionHeader}>
+                        <h2 className={styles.sectionTitle}>Top Selection</h2>
+                        <button className={styles.viewAllBtn}>View All</button>
+                    </div>
                     <div className={styles.categoryGrid}>
-                        {categories.map(cat => (
+                        {topCategories.map(cat => (
                             <div key={cat.id} className={styles.categoryCard}>
                                 <div className={styles.catImageContainer}>
                                     <img src={cat.img} alt={cat.name} className={styles.catImage} />
@@ -40,9 +50,11 @@ const HomePage = () => {
                     </div>
                 </section>
 
-                {/* Featured Products Section */}
                 <section className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Featured Products</h2>
+                    <div className={styles.sectionHeader}>
+                        <h2 className={styles.sectionTitle}>Featured Products</h2>
+                        <button className={styles.viewAllBtn}>View All</button>
+                    </div>
                     <div className={styles.productGrid}>
                         {products.map(prod => (
                             <div key={prod.id} className={styles.productCard}>
@@ -59,6 +71,8 @@ const HomePage = () => {
                     </div>
                 </section>
             </div>
+
+            <Footer />
         </div>
     );
 };

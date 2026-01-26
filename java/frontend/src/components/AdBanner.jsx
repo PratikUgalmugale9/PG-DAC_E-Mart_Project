@@ -10,47 +10,29 @@ const AdBanner = () => {
         {
             id: 1,
             headline: "Mega Electronics Sale",
-            description: "Experience the future with up to 50% off on premium gadgets. Upgrade your tech game today.",
-            image: "https://placehold.co/800x600/0078d4/fff?text=Tech+Deals",
+            description: "Up to 50% off on premium gadgets. Upgrade your tech today.",
+            image: "https://placehold.co/400x300/0078d4/fff?text=Mobiles+&+Laptops",
             primaryBtn: "Shop Now",
             secondaryBtn: "View Offers",
-            bgColor: "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)" // Clean Silver-White
+            bgColor: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)" // Light Blue
         },
         {
             id: 2,
-            headline: "Fashion That Speaks",
-            description: "Discover the latest trends in clothing and accessories. Redefine your style with our new collection.",
-            image: "https://placehold.co/800x600/e91e63/fff?text=New+Arrivals",
-            primaryBtn: "Shop Fashion",
+            headline: "Latest Fashion Trends",
+            description: "Redefine your style with our summer collection.",
+            image: "https://placehold.co/400x300/e91e63/fff?text=Men+&+Women",
+            primaryBtn: "Shop Now",
             secondaryBtn: "New Arrivals",
-            bgColor: "linear-gradient(to top, #fad0c4 0%, #ffd1ff 100%)" // Soft Pink/Peach
+            bgColor: "linear-gradient(to right, #fce4ec, #f8bbd0)" // Light Pink
         },
         {
             id: 3,
-            headline: "Smart Home Revolution",
-            description: "Automate your life with top-rated smart assistants and security systems. Comfort meets technology.",
-            image: "https://placehold.co/800x600/4caf50/fff?text=Smart+Living",
-            primaryBtn: "Shop Smart",
-            secondaryBtn: "Learn More",
-            bgColor: "linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)" // Fresh Green
-        },
-        {
-            id: 4,
-            headline: "Glow & Shine Beauty",
-            description: "Unlock your radiance with our curated selection of premium skincare and makeup brands.",
-            image: "https://placehold.co/800x600/9c27b0/fff?text=Beauty+Care",
-            primaryBtn: "Shop Beauty",
-            secondaryBtn: "Top Rated",
-            bgColor: "linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%)" // Soft Blue-Grey
-        },
-        {
-            id: 5,
-            headline: "Fitness & Performance",
-            description: "Push your limits with high-performance gear. Equipment and apparel for every athlete.",
-            image: "https://placehold.co/800x600/ff9800/fff?text=Sport+Mode",
-            primaryBtn: "Shop Sports",
-            secondaryBtn: "Deals",
-            bgColor: "linear-gradient(120deg, #f6d365 0%, #fda085 100%)" // Warm Orange/Yellow
+            headline: "Home & Kitchen",
+            description: "Essentials for a modern home. Best deals on appliances.",
+            image: "https://placehold.co/400x300/4caf50/fff?text=Home+Ap",
+            primaryBtn: "Shop Now",
+            secondaryBtn: "Explore",
+            bgColor: "linear-gradient(120deg, #e8f5e9 0%, #c8e6c9 100%)" // Light Green
         }
     ];
 
@@ -90,7 +72,7 @@ const AdBanner = () => {
                     <div
                         key={slide.id}
                         className={styles.slide}
-                        style={{ backgroundColor: slide.bgColor }}
+                        style={{ background: slide.bgColor }}
                     >
                         <div className={styles.textSection}>
                             <h2 className={styles.headline}>{slide.headline}</h2>

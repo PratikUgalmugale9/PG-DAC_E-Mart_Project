@@ -1,0 +1,91 @@
+
+.categoryContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow like Flipkart */
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.categoryList {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.categoryItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    min-width: 80px; /* Ensure click target size */
+    transition: transform 0.2s;
+}
+
+.categoryItem:hover {
+    transform: translateY(-2px);
+}
+
+/* Specific styling for the icons/images */
+.iconContainer {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+    /* You might want to remove background/radius if using actual images/icons directly, 
+       but this helps if icons are inconsistent sizes */
+}
+
+.categoryIcon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* If using react-icons, specific size can be set inline or here */
+    font-size: 2.5rem; 
+    color: #333;
+}
+
+.categoryLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .categoryContainer {
+        justify-content: flex-start; /* Allow scrolling from start */
+        padding: 10px;
+        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    }
+
+    .categoryList {
+        gap: 15px;
+    }
+
+    .categoryItem {
+        min-width: 60px;
+    }
+
+    .iconContainer {
+        width: 50px;
+        height: 50px;
+    }
+
+    .categoryIcon {
+        font-size: 2rem;
+    }
+
+    .categoryLabel {
+        font-size: 12px;
+    }
+}
