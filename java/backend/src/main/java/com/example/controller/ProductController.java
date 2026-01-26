@@ -43,4 +43,12 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
     }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<Product>> getProductsByCategory(
+            @PathVariable Integer categoryId) {
+
+        return ResponseEntity.ok(
+                productService.getProductsByCategory(categoryId));
+    }
 }

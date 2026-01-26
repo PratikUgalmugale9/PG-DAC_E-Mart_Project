@@ -12,4 +12,7 @@ public interface ProductService {
     Product getProductById(Integer id);
 
     void deleteProduct(Integer id);
+
+    List<Product> getProductsByCategory(Integer categoryId);
+
 }
