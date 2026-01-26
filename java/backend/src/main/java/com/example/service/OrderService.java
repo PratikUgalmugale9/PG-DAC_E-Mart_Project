@@ -5,13 +5,11 @@ import java.util.List;
 
 public interface OrderService {
 
-    Ordermaster placeOrder(Ordermaster order);
+    Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode);
 
     List<Ordermaster> getAllOrders();
 
     Ordermaster getOrderById(Integer id);
 
-    Ordermaster updateOrder(Integer id, Ordermaster order);
-
-    void deleteOrder(Integer id);
+    List<Ordermaster> getOrdersByUser(Integer userId);
 }
