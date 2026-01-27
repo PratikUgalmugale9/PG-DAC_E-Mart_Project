@@ -1,12 +1,10 @@
 package com.example.service;
 
-import org.springframework.stereotype.Service;
-
+import com.example.dto.CategoryBrowseResponse;
 import com.example.entity.Catmaster;
 import com.example.entity.Product;
 import com.example.repository.CatMasterRepository;
-//import com.example.repository.ProductRepository;
-import com.example.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -14,47 +12,62 @@ import java.util.List;
 public class CatalogServiceImpl implements CatalogService {
 
     private final CatMasterRepository catRepo;
-    private  ProductService prodRepo;
+    private final ProductService productService;
 
     public CatalogServiceImpl(CatMasterRepository catRepo,
-    		ProductService prodRepo
-    		) {
+                              ProductService productService) {
         this.catRepo = catRepo;
-        this.prodRepo = prodRepo;
+        this.productService = productService;
     }
 
+    // 1️⃣ Main categories (parent categories)
+    @Override
     public List<Catmaster> getMainCategories() {
         return catRepo.findBySubcatIdIsNull();
     }
 
-    
-//    public Object handleCategorySelection(String catId) {
-//    
-//      Catmaster category = catRepo.findByCatId(catId);
-//        //  .orElseThrow(() -> new RuntimeException("Category not found"));
-//
-//      // CASE 1: FLAG = Y → SHOW DETAILS / PRODUCTS
-//      if (category.getFlag() == 'Y') {
-//      // Example: return products
-//      return prodRepo.getProductById(category.getId());
-//      }
-//
-//  // CASE 2: FLAG = N → FETCH SUBCATEGORIES
-//  return catRepo.findBySubcatId(catId);
-//}
-
+    // 2️⃣ Subcategories of a category
+    @Override
     public List<Catmaster> getSubCategories(String catId) {
         return catRepo.findBySubcatId(catId);
     }
 
-	@Override
-	public List<Product> getProducts(Integer catMasterId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    // 3️⃣ Products of a category (leaf)
+    @Override
+    public List<Product> getProducts(Integer catMasterId) {
+        return productService.getProductsByCategory(catMasterId);
+    }
 
-//    public List<Product> getProducts(Integer catMasterId) {
-//        return prodRepo.findByCategory_CatMasterId(catMasterId);
-//    }
+    // 4️⃣ Browse category (navigation + listing)
+    @Override
+    public CategoryBrowseResponse browseByCategory(String catId) {
+
+        CategoryBrowseResponse response = new CategoryBrowseResponse();
+
+        Catmaster category = catRepo.findByCatId(catId);
+        if (category == null) {
+            throw new RuntimeException("Category not found: " + catId);
+        }
+
+        // 🔥 DATA-DRIVEN CHECK (FIXED LOGIC)
+        List<Catmaster> subCategories = catRepo.findBySubcatId(catId);
+
+        // Case 1: Subcategories exist → navigation
+        if (!subCategories.isEmpty()) {
+            response.setHasSubCategories(true);
+            response.setSubCategories(subCategories);
+            response.setProduct(null);
+            return response;
+        }
+
+        // Case 2: Leaf category → products
+        List<Product> products =
+                productService.getProductsByCategory(category.getId());
+
+        response.setHasSubCategories(false);
+        response.setSubCategories(null);
+        response.setProduct(products);
+
+        return response;
+    }
 }
-

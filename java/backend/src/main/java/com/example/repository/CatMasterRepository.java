@@ -16,8 +16,8 @@ public interface CatMasterRepository
     // Sub Categories
     List<Catmaster> findBySubcatId(String subcatId);
 
-        // Fetch a single category by Cat_Id
-        Catmaster findByCatId(String catId);
+    // Fetch a single category by Cat_Id
+    Catmaster findByCatId(String catId);
         
     
 }

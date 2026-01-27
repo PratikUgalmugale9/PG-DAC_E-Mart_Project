@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.CategoryBrowseResponse;
 import com.example.entity.Catmaster;
 import com.example.entity.Product;
 
@@ -12,5 +13,7 @@ public interface CatalogService {
     List<Catmaster> getSubCategories(String catId);
 
     List<Product> getProducts(Integer catMasterId);
+
+    CategoryBrowseResponse browseByCategory(String catId);
 }
 

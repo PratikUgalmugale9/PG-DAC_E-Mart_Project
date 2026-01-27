@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";              // 🔥 IMPORTANT
+import {jwtDecode} from "jwt-decode"; // 🔥 IMPORTANT
 import "../styles/Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

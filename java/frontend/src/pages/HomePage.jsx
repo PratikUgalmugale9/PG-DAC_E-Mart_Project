@@ -1,21 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-import Navbar from '../components/Navbar';
 import CategoryBar from '../components/CategoryBar';
 import AdBanner from '../components/AdBanner';
 import styles from '../styles/HomePage.module.css';
 
 const HomePage = () => {
-    // Dummy Data for Product Sections (kept from previous version or enhanced)
-    const topCategories = [
-        { id: 1, name: 'Mobiles', img: 'https://placehold.co/150x150?text=Mobiles' },
-        { id: 2, name: 'Fashion', img: 'https://placehold.co/150x150?text=Fashion' },
-        { id: 3, name: 'Electronics', img: 'https://placehold.co/150x150?text=Electronics' },
-        { id: 4, name: 'Home', img: 'https://placehold.co/150x150?text=Home' },
-        { id: 5, name: 'Beauty', img: 'https://placehold.co/150x150?text=Beauty' },
-        { id: 6, name: 'Appliances', img: 'https://placehold.co/150x150?text=Appliances' }
-    ];
 
+    // 🔥 Categories from backend
+    const [categories, setCategories] = useState([]);
+
+    // 🔥 Fetch categories on page load
+    useEffect(() => {
+        axios
+            .get('http://localhost:8080/api/catalog/categories')
+            .then(response => {
+                setCategories(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+            });
+    }, []);
+
+    // 🔹 Dummy products (unchanged)
     const products = [
         { id: 1, name: 'Wireless Headphones', price: '$99.99', img: 'https://placehold.co/200x200?text=Headphones' },
         { id: 2, name: 'Smart Watch', price: '$149.99', img: 'https://placehold.co/200x200?text=Watch' },
@@ -27,52 +34,70 @@ const HomePage = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            {/* Navbar is in App.jsx */}
+            {/* Navbar already handled in App.jsx */}
             <CategoryBar />
 
             <div className={styles.mainContent}>
                 <AdBanner />
 
+                {/* 🔥 TOP CATEGORIES – FROM API */}
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <h2 className={styles.sectionTitle}>Top Selection</h2>
+                        <h2 className={styles.sectionTitle}>Top Categories</h2>
                         <button className={styles.viewAllBtn}>View All</button>
                     </div>
+
                     <div className={styles.categoryGrid}>
-                        {topCategories.map(cat => (
+                        {categories.map(cat => (
                             <div key={cat.id} className={styles.categoryCard}>
                                 <div className={styles.catImageContainer}>
-                                    <img src={cat.img} alt={cat.name} className={styles.catImage} />
+                                    <img
+                                        src={cat.catImagePath}   // 🔥 DIRECT FROM DB
+                                        alt={cat.catName}
+                                        className={styles.catImage}
+                                        onError={(e) => {
+                                            e.target.src = '/images/default.jpg';
+                                        }}
+                                    />
                                 </div>
-                                <div className={styles.catName}>{cat.name}</div>
+                                <div className={styles.catName}>
+                                    {cat.catName}
+                                </div>
                             </div>
                         ))}
                     </div>
                 </section>
 
+                {/* 🔹 FEATURED PRODUCTS – UNCHANGED */}
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2 className={styles.sectionTitle}>Featured Products</h2>
                         <button className={styles.viewAllBtn}>View All</button>
                     </div>
+
                     <div className={styles.productGrid}>
                         {products.map(prod => (
                             <div key={prod.id} className={styles.productCard}>
                                 <div className={styles.prodImageContainer}>
-                                    <img src={prod.img} alt={prod.name} className={styles.prodImage} />
+                                    <img
+                                        src={prod.img}
+                                        alt={prod.name}
+                                        className={styles.prodImage}
+                                    />
                                 </div>
                                 <div className={styles.prodInfo}>
                                     <h3 className={styles.prodName}>{prod.name}</h3>
                                     <div className={styles.prodPrice}>{prod.price}</div>
-                                    <button className={styles.addToCartBtn}>Add to Cart</button>
+                                    <button className={styles.addToCartBtn}>
+                                        Add to Cart
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </section>
-            </div>
 
-            {/* Footer is in App.jsx */}
+            </div>
         </div>
     );
 };
