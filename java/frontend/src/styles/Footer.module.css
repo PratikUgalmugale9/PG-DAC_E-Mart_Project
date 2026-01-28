@@ -1,119 +1,225 @@
 .footer {
-    background-color: var(--primary-blue);
-    color: white;
-    padding: 4rem 5% 1rem;
+    background: #0a0a0a;
+    color: #ffffff;
+    padding: 5rem 5% 2rem;
+    font-family: inherit;
 }
 
-.footerContent {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 3rem;
+.footerContainer {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.brandSection h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-}
-
-.brandSection p {
-    opacity: 0.9;
-    line-height: 1.6;
-    max-width: 300px;
-}
-
-.column h3 {
-    font-size: 1.1rem;
-    margin-bottom: 1.2rem;
-    font-weight: 600;
-    position: relative;
-    display: inline-block;
-}
-
-.column h3::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -5px;
-    width: 30px;
-    height: 2px;
-    background-color: var(--accent-cyan);
-}
-
-.column ul {
+.newsletter {
     display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--primary);
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 5rem;
+    transform: translateY(-20%);
+    box-shadow: 0 20px 40px rgba(0, 120, 212, 0.2);
 }
 
-.column a {
-    opacity: 0.8;
-    transition: var(--transition);
+.newsletterText h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.newsletterText p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.subscriberBox {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 400px;
+}
+
+.subscriberBox input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    color: white;
+    outline: none;
     font-size: 0.95rem;
 }
 
-.column a:hover {
-    opacity: 1;
-    padding-left: 5px;
+.subscriberBox input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.socialIcons {
+.subscriberBox button {
+    background: white;
+    color: var(--primary);
+    width: 45px;
+    height: 45px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: var(--transition-fast);
+}
+
+.subscriberBox button:hover {
+    transform: scale(1.05);
+    background: var(--bg-light);
+}
+
+.footerMain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4rem;
+    margin-bottom: 4rem;
+}
+
+.brandInfo {
+    flex: 1;
+    min-width: 300px;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.logo span {
+    color: white;
+}
+
+.description {
+    color: #a0a0a0;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    max-width: 380px;
+}
+
+.socialLinks {
     display: flex;
     gap: 1rem;
 }
 
 .socialIcon {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
-    justify-content: center;
     align-items: center;
-    transition: var(--transition);
-    cursor: pointer;
-    font-size: 1.1rem;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    transition: var(--transition-smooth);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .socialIcon:hover {
-    background-color: var(--bg-white);
-    color: var(--primary-blue);
-    transform: translateY(-3px);
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 120, 212, 0.3);
 }
 
-.copyright {
+.linksGrid {
+    flex: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 3rem;
+}
+
+.linkColumn h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.linkColumn a {
+    display: block;
+    color: #a0a0a0;
+    margin-bottom: 1rem;
+    transition: var(--transition-fast);
+    font-size: 0.95rem;
+}
+
+.linkColumn a:hover {
+    color: var(--primary);
+    transform: translateX(5px);
+}
+
+.contactItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #a0a0a0;
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+}
+
+.contactItem svg {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.footerBottom {
+    padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-    padding-top: 1.5rem;
-    opacity: 0.7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #606060;
     font-size: 0.9rem;
 }
 
-/* Responsiveness */
-@media (max-width: 1024px) {
-    .footerContent {
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
+.footerBottomLinks {
+    display: flex;
+    gap: 2rem;
+}
+
+.footerBottomLinks a:hover {
+    color: white;
+}
+
+@media (max-width: 992px) {
+    .newsletter {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        padding: 2rem;
     }
 }
 
-@media (max-width: 600px) {
-    .footerContent {
-        grid-template-columns: 1fr;
+@media (max-width: 768px) {
+    .footer {
+        padding: 3rem 5% 2rem;
+    }
+
+    .newsletter {
+        transform: none;
+        margin-bottom: 3rem;
+    }
+
+    .footerMain {
+        gap: 3rem;
+    }
+
+    .footerBottom {
+        flex-direction: column;
+        gap: 1.5rem;
         text-align: center;
-    }
-
-    .brandSection p {
-        margin: 0 auto;
-    }
-
-    .column h3::after {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .socialIcons {
-        justify-content: center;
     }
 }

@@ -41,20 +41,22 @@ function App() {
 
           <NavigationWrapper />
 
-          <Routes>
-            {/* AUTH */}
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
+          <div className="main-layout">
+            <Routes>
+              {/* AUTH */}
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
 
-            {/* HOME */}
-            <Route path="/home" element={<HomePage />} />
+              {/* HOME */}
+              <Route path="/home" element={<HomePage />} />
 
-            {/* CATEGORY BROWSE */}
-            <Route path="/browse/:catId" element={<BrowseCategory />} />
+              {/* CATEGORY BROWSE */}
+              <Route path="/browse/:catId" element={<BrowseCategory />} />
 
-            {/* CART */}
-            <Route path="/cart" element={<CartPage />} />
-          </Routes>
+              {/* CART */}
+              <Route path="/cart" element={<CartPage />} />
+            </Routes>
+          </div>
 
           <Footer />
 

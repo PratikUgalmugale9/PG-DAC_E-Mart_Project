@@ -7,12 +7,17 @@
   padding: 0;
 } */
 
+.main-layout {
+  padding-top: 5rem;
+}
+
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   /* margin: 100px auto; */
-  min-height: calc(100vh - 120px); /* full page minus navbar/footer */
+  min-height: calc(100vh - 120px);
+  /* full page minus navbar/footer */
   background-image: url('https://www.shutterstock.com/image-photo/network-security-system-personal-data-260nw-2117026061.jpg');
   background-size: cover;
   background-position: center;
@@ -22,7 +27,8 @@
 }
 
 .auth-box {
-  background-color: rgba(255, 255, 255, 0.95); /* slightly transparent */
+  background-color: rgba(255, 255, 255, 0.95);
+  /* slightly transparent */
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 30px;
@@ -99,9 +105,11 @@
 .auth-message {
   margin-top: 15px;
   text-align: center;
-  color: #ff0000; /* Red color for error messages */
+  color: #ff0000;
+  /* Red color for error messages */
 }
 
 .auth-message.success {
-  color: #28a745; /* Green color for success messages */
+  color: #28a745;
+  /* Green color for success messages */
 }

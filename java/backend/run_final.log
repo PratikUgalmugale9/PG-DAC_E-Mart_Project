@@ -4418,3 +4418,568 @@ Hibernate:
         catmaster c1_0 
     where
         c1_0.sub_cat_id is null
+Hibernate: 
+    select
+        c1_0.cat_master_id,
+        c1_0.cat_id,
+        c1_0.cat_image_path,
+        c1_0.cat_name,
+        c1_0.flag,
+        c1_0.sub_cat_id 
+    from
+        catmaster c1_0 
+    where
+        c1_0.sub_cat_id is null
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.cart_item_id,
+        c1_0.cart_id,
+        c1_0.price_snapshot,
+        c1_0.prod_id,
+        c1_0.quantity 
+    from
+        cartitem c1_0 
+    where
+        c1_0.cart_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        l1_0.loyaltycard_id,
+        l1_0.card_number,
+        l1_0.expiry_date,
+        l1_0.is_active,
+        l1_0.issued_date,
+        l1_0.points_balance,
+        l1_0.user_id 
+    from
+        loyaltycard l1_0 
+    where
+        l1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    left join
+        cart c1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        u1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.cat_master_id,
+        c1_0.cat_id,
+        c1_0.cat_image_path,
+        c1_0.cat_name,
+        c1_0.flag,
+        c1_0.sub_cat_id 
+    from
+        catmaster c1_0 
+    where
+        c1_0.sub_cat_id is null
+2026-01-28T21:12:20.332+05:30  WARN 20892 --- [E-Mart] [l-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=10m25s876ms577µs800ns).
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.cart_item_id,
+        c1_0.cart_id,
+        c1_0.price_snapshot,
+        c1_0.prod_id,
+        c1_0.quantity 
+    from
+        cartitem c1_0 
+    where
+        c1_0.cart_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        c1_0.cat_master_id,
+        c1_0.cat_id,
+        c1_0.cat_image_path,
+        c1_0.cat_name,
+        c1_0.flag,
+        c1_0.sub_cat_id 
+    from
+        catmaster c1_0 
+    where
+        c1_0.sub_cat_id is null
+Hibernate: 
+    select
+        c1_0.cat_master_id,
+        c1_0.cat_id,
+        c1_0.cat_image_path,
+        c1_0.cat_name,
+        c1_0.flag,
+        c1_0.sub_cat_id 
+    from
+        catmaster c1_0 
+    where
+        c1_0.sub_cat_id is null
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.cart_item_id,
+        c1_0.cart_id,
+        c1_0.price_snapshot,
+        c1_0.prod_id,
+        c1_0.quantity 
+    from
+        cartitem c1_0 
+    where
+        c1_0.cart_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        c1_0.cat_master_id,
+        c1_0.cat_id,
+        c1_0.cat_image_path,
+        c1_0.cat_name,
+        c1_0.flag,
+        c1_0.sub_cat_id 
+    from
+        catmaster c1_0 
+    where
+        c1_0.sub_cat_id is null
+Hibernate: 
+    select
+        c1_0.cat_master_id,
+        c1_0.cat_id,
+        c1_0.cat_image_path,
+        c1_0.cat_name,
+        c1_0.flag,
+        c1_0.sub_cat_id 
+    from
+        catmaster c1_0 
+    where
+        c1_0.sub_cat_id is null
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.address,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.mobile,
+        u1_0.password_hash,
+        u1_0.provider 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        c1_0.cart_id,
+        c1_0.is_active,
+        c1_0.user_id 
+    from
+        cart c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.cart_item_id,
+        c1_0.cart_id,
+        c1_0.price_snapshot,
+        c1_0.prod_id,
+        c1_0.quantity 
+    from
+        cartitem c1_0 
+    where
+        c1_0.cart_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?
+Hibernate: 
+    select
+        p1_0.prod_id,
+        p1_0.cardholder_price,
+        p1_0.cat_master_id,
+        p1_0.mrp_price,
+        p1_0.points_2b_redeem,
+        p1_0.prod_image_path,
+        p1_0.prod_long_desc,
+        p1_0.prod_name,
+        p1_0.prod_short_desc 
+    from
+        product p1_0 
+    where
+        p1_0.prod_id=?

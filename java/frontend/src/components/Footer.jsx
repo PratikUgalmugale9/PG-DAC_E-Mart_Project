@@ -1,50 +1,74 @@
 import React from 'react';
 import styles from '../styles/Footer.module.css';
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi';
 
 const Footer = () => {
     return (
         <footer className={styles.footer}>
-            <div className={styles.footerContent}>
-                <div className={styles.brandSection}>
-                    <h2>eMart</h2>
-                    <p>Your one-stop shop for everything you need. Quality products, best prices, and widely trusted service.</p>
-                </div>
-
-                <div className={styles.column}>
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Electronics</a></li>
-                        <li><a href="#">Fashion</a></li>
-                        <li><a href="#">Grocery</a></li>
-                        <li><a href="#">Offers</a></li>
-                    </ul>
-                </div>
-
-                <div className={styles.column}>
-                    <h3>Customer Service</h3>
-                    <ul>
-                        <li><a href="#">Help & FAQ</a></li>
-                        <li><a href="#">Returns & Refunds</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms & Conditions</a></li>
-                    </ul>
-                </div>
-
-                <div className={styles.column}>
-                    <h3>Follow Us</h3>
-                    <div className={styles.socialIcons}>
-                        <div className={styles.socialIcon}><FaFacebookF /></div>
-                        <div className={styles.socialIcon}><FaTwitter /></div>
-                        <div className={styles.socialIcon}><FaInstagram /></div>
-                        <div className={styles.socialIcon}><FaLinkedinIn /></div>
+            <div className={styles.footerContainer}>
+                <div className={styles.newsletter}>
+                    <div className={styles.newsletterText}>
+                        <h3>Join our newsletter</h3>
+                        <p>Subscribe to get special offers and once-in-a-lifetime deals.</p>
+                    </div>
+                    <div className={styles.subscriberBox}>
+                        <input type="email" placeholder="Enter your email" />
+                        <button><FiSend /></button>
                     </div>
                 </div>
-            </div>
 
-            <div className={styles.copyright}>
-                &copy; 2026 eMart. All Rights Reserved.
+                <div className={styles.footerMain}>
+                    <div className={styles.brandInfo}>
+                        <div className={styles.logo}>e<span>Mart</span></div>
+                        <p className={styles.description}>
+                            Premium shopping experience with a focus on quality and customer satisfaction. Explore our wide range of categories.
+                        </p>
+                        <div className={styles.socialLinks}>
+                            <a href="#" className={styles.socialIcon}><FiFacebook /></a>
+                            <a href="#" className={styles.socialIcon}><FiTwitter /></a>
+                            <a href="#" className={styles.socialIcon}><FiInstagram /></a>
+                            <a href="#" className={styles.socialIcon}><FiLinkedin /></a>
+                        </div>
+                    </div>
+
+                    <div className={styles.linksGrid}>
+                        <div className={styles.linkColumn}>
+                            <h4>Shop</h4>
+                            <a href="#">Electronics</a>
+                            <a href="#">Fashion</a>
+                            <a href="#">Home & Living</a>
+                            <a href="#">Accessories</a>
+                        </div>
+                        <div className={styles.linkColumn}>
+                            <h4>Support</h4>
+                            <a href="#">Help Center</a>
+                            <a href="#">Track Order</a>
+                            <a href="#">Returns</a>
+                            <a href="#">Shipping Info</a>
+                        </div>
+                        <div className={styles.linkColumn}>
+                            <h4>Company</h4>
+                            <a href="#">About Us</a>
+                            <a href="#">Careers</a>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Terms of Service</a>
+                        </div>
+                        <div className={styles.linkColumn}>
+                            <h4>Contact</h4>
+                            <div className={styles.contactItem}><FiMapPin /> 123 Street, City, Country</div>
+                            <div className={styles.contactItem}><FiPhone /> +1 234 567 890</div>
+                            <div className={styles.contactItem}><FiMail /> support@emart.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.footerBottom}>
+                    <p>&copy; 2026 eMart. Designed for excellence.</p>
+                    <div className={styles.footerBottomLinks}>
+                        <a href="#">Sitemap</a>
+                        <a href="#">Cookies</a>
+                    </div>
+                </div>
             </div>
         </footer>
     );
