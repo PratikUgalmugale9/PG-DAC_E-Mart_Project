@@ -15,50 +15,39 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+        @Autowired
+        private JwtUtil jwtUtil;
 
-    @Autowired
-    private UserRepository userRepository;
+        @Autowired
+        private UserRepository userRepository;
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+        @Override
+        protected void doFilterInternal(
+                        HttpServletRequest request,
+                        HttpServletResponse response,
+                        FilterChain filterChain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+                String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
-            String token = authHeader.substring(7);
+                        String token = authHeader.substring(7);
 
-            if (jwtUtil.validateToken(token)) {
+                        if (jwtUtil.validateToken(token)) {
+                                String email = jwtUtil.extractEmail(token);
+                                userRepository.findByEmail(email).ifPresent(user -> {
+                                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                                        user.getEmail(), // principal
+                                                        null,
+                                                        Collections.emptyList());
+                                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                                });
+                        }
+                }
 
-                String email = jwtUtil.extractEmail(token);
-
-                User user = userRepository.findByEmail(email)
-                        .orElseThrow(() -> new RuntimeException("User not found"));
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                user.getEmail(),   // principal
-                                null,
-                                Collections.emptyList()
-                        );
-
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authentication);
-            }
+                filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
-    }
 }
-
-

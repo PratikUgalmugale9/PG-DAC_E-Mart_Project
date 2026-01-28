@@ -8,8 +8,12 @@ public class CartItemResponseDTO {
     private Integer cartId;
     private Integer productId;
     private String productName;
+    private String prodImagePath;
     private Integer quantity;
     private BigDecimal priceSnapshot;
+    private BigDecimal mrpPrice;
+    private BigDecimal cardholderPrice;
+    private Integer pointsToBeRedeem;
     private BigDecimal totalPrice;
 
     public Integer getCartItemId() {
@@ -41,7 +45,17 @@ public class CartItemResponseDTO {
     }
 
     public void setProductName(String productName) {
+        // ... (keep existing if needed, but I'll replace the block to ensure correct
+        // order)
         this.productName = productName;
+    }
+
+    public String getProdImagePath() {
+        return prodImagePath;
+    }
+
+    public void setProdImagePath(String prodImagePath) {
+        this.prodImagePath = prodImagePath;
     }
 
     public Integer getQuantity() {
@@ -58,6 +72,30 @@ public class CartItemResponseDTO {
 
     public void setPriceSnapshot(BigDecimal priceSnapshot) {
         this.priceSnapshot = priceSnapshot;
+    }
+
+    public BigDecimal getMrpPrice() {
+        return mrpPrice;
+    }
+
+    public void setMrpPrice(BigDecimal mrpPrice) {
+        this.mrpPrice = mrpPrice;
+    }
+
+    public BigDecimal getCardholderPrice() {
+        return cardholderPrice;
+    }
+
+    public void setCardholderPrice(BigDecimal cardholderPrice) {
+        this.cardholderPrice = cardholderPrice;
+    }
+
+    public Integer getPointsToBeRedeem() {
+        return pointsToBeRedeem;
+    }
+
+    public void setPointsToBeRedeem(Integer pointsToBeRedeem) {
+        this.pointsToBeRedeem = pointsToBeRedeem;
     }
 
     public BigDecimal getTotalPrice() {

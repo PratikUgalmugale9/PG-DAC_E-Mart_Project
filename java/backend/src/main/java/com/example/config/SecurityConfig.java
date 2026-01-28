@@ -52,11 +52,12 @@ public class SecurityConfig {
                         .requestMatchers("/categories/**").permitAll()
 
                         // PROTECTED APIS
+                        .requestMatchers("/api/cartitem/**").authenticated()
                         .requestMatchers("/cart/**").authenticated()
                         // .requestMatchers("/orders/**").authenticated()
                         // .requestMatchers("/payment/**").authenticated()
 
-                        // EVERYTHING ELSE
+                        // EVERYTHING ELSE (Be cautious, some might need permitAll)
                         .anyRequest().permitAll())
 
                 // 🔴 JWT FILTER
