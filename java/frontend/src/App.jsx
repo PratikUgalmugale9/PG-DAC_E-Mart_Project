@@ -8,7 +8,10 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import CartPage from './pages/CartPage';
-import BrowseCategory from './pages/BrowseCategory';   // 🔥 ADD THIS
+import BrowseCategory from './pages/BrowseCategory';
+
+// 🔥 CART CONTEXT
+import { CartProvider } from './context/CartContext';
 
 // Wrapper component to provide navigation capability to Navbar
 const NavigationWrapper = () => {
@@ -19,7 +22,7 @@ const NavigationWrapper = () => {
   };
 
   const handleLogoClick = () => {
-    navigate('/home');   // 🔥 go to home after login
+    navigate('/home');
   };
 
   return (
@@ -32,28 +35,32 @@ const NavigationWrapper = () => {
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <NavigationWrapper />
+    <CartProvider>   {/* 🔥 GLOBAL CART STATE */}
+      <div className="App">
+        <BrowserRouter>
 
-        <Routes>
-          {/* AUTH */}
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
+          <NavigationWrapper />
 
-          {/* HOME */}
-          <Route path="/home" element={<HomePage />} />
+          <Routes>
+            {/* AUTH */}
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
 
-          {/* 🔥 CATEGORY BROWSE ROUTE (THIS FIXES YOUR ERROR) */}
-          <Route path="/browse/:catId" element={<BrowseCategory />} />
+            {/* HOME */}
+            <Route path="/home" element={<HomePage />} />
 
-          {/* CART */}
-          <Route path="/cart" element={<CartPage />} />
-        </Routes>
+            {/* CATEGORY BROWSE */}
+            <Route path="/browse/:catId" element={<BrowseCategory />} />
 
-        <Footer />
-      </BrowserRouter>
-    </div>
+            {/* CART */}
+            <Route path="/cart" element={<CartPage />} />
+          </Routes>
+
+          <Footer />
+
+        </BrowserRouter>
+      </div>
+    </CartProvider>
   );
 }
 
