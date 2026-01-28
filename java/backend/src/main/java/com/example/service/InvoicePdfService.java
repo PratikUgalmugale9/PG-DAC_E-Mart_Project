@@ -315,4 +315,19 @@ public class InvoicePdfService {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         return cell;
     }
+ // Added by Hamzah - wrapper method for payment email invoice
+    public byte[] generateInvoiceAsBytes(Ordermaster order, List<OrderItem> items) {
+
+        if (order == null) {
+            throw new RuntimeException("Order not found!");
+        }
+
+        if (items == null || items.isEmpty()) {
+            throw new RuntimeException("No order items found!");
+        }
+
+        return generateInvoicePdf(order, items);
+    }
+
+
 }

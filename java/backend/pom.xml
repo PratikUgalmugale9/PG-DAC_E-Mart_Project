@@ -100,6 +100,13 @@
     <version>1.3.30</version>
 </dependency>
 
+<!-- dependency for mail -->
+	<dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-mail</artifactId>
+	</dependency>
+
+
 	</dependencies>
 
 	<build>
