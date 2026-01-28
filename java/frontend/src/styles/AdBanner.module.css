@@ -1,21 +1,22 @@
+/* ===================================
+   AD BANNER - MODERN GRADIENT DESIGN
+   =================================== */
+
 .bannerContainer {
     position: relative;
-    width: 98%;
-    max-width: 1400px;
-    margin: 15px auto;
-    height: 320px;
-    /* Medium height */
-    border-radius: 12px;
+    width: 100%;
+    height: 400px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    background-color: #f5f5f5;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    margin-bottom: 2rem;
 }
 
 .slideTrack {
     display: flex;
-    height: 100%;
-    transition: transform 0.5s ease-in-out;
     width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide {
@@ -23,198 +24,435 @@
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 60px;
-    /* Space for arrows */
-    box-sizing: border-box;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
+.contentWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 4rem;
+    gap: 3rem;
+}
+
+/* ===================================
+   TEXT SECTION
+   =================================== */
 .textSection {
     flex: 1;
+    color: white;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding-right: 40px;
-    color: #333;
-    z-index: 2;
-    /* Ensure on top */
+    gap: 1.25rem;
+}
+
+.discountBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    padding: 0.625rem 1.25rem;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .headline {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    line-height: 1.2;
-    color: #1a1a1a;
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: slideInLeft 0.8s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tagline {
+    font-size: 1.375rem;
+    font-weight: 600;
+    opacity: 0.95;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .description {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 25px;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin: 0;
     max-width: 500px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* ===================================
+   BUTTONS
+   =================================== */
 .buttonGroup {
     display: flex;
-    gap: 15px;
+    gap: 1rem;
+    margin-top: 0.5rem;
 }
 
 .primaryBtn,
 .secondaryBtn {
-    padding: 10px 24px;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
+    padding: 1rem 2rem;
     border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .primaryBtn {
-    background-color: #0078d4;
-    color: white;
+    background: white;
+    color: #667eea;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .primaryBtn:hover {
-    background-color: #005a9e;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.primaryBtn svg {
+    stroke: #667eea;
+    transition: transform 0.3s ease;
+}
+
+.primaryBtn:hover svg {
+    transform: translateX(3px);
 }
 
 .secondaryBtn {
-    background-color: white;
-    color: #0078d4;
-    border: 1px solid #0078d4;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .secondaryBtn:hover {
-    background-color: #f0f8ff;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
 }
 
-.imageSection {
-    flex: 1;
-    height: 100%;
+/* ===================================
+   ICON SECTION
+   =================================== */
+.iconSection {
+    flex: 0 0 400px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     position: relative;
+    z-index: 2;
 }
 
-.bannerImage {
-    max-height: 90%;
-    max-width: 100%;
-    object-fit: contain;
-    /* Optional: drop shadow for the product image */
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+.iconCircle {
+    width: 280px;
+    height: 280px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
 }
 
-/* Navigation */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.iconCircle svg {
+    stroke: white;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+/* Decorative Circles */
+.decorCircle1 {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    top: 20%;
+    right: 10%;
+    animation: float 4s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+
+.decorCircle2 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    bottom: 25%;
+    left: 5%;
+    animation: float 5s ease-in-out infinite reverse;
+}
+
+/* ===================================
+   NAVIGATION
+   =================================== */
 .arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.6);
-    border: none;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    cursor: pointer;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
-    color: #333;
+    justify-content: center;
+    cursor: pointer;
     z-index: 10;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
 }
 
 .arrow:hover {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.arrow svg {
+    stroke: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .leftArrow {
-    left: 20px;
+    left: 2rem;
 }
 
 .rightArrow {
-    right: 20px;
+    right: 2rem;
 }
 
-/* Dots */
+/* ===================================
+   DOTS NAVIGATION
+   =================================== */
 .dotsContainer {
     position: absolute;
-    bottom: 15px;
+    bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 8px;
+    gap: 0.75rem;
     z-index: 10;
 }
 
 .dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
-.active {
-    background-color: #0078d4;
-    width: 25px;
-    border-radius: 5px;
-    /* Pill shape */
+.dot:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(1.2);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
+.dot.active {
+    width: 36px;
+    border-radius: 6px;
+    background: white;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+@media (max-width: 1024px) {
     .bannerContainer {
-        height: auto;
-        min-height: 450px;
-        /* Taller to accommodate stacked content */
-        margin: 10px;
-        width: auto;
+        height: 350px;
     }
 
-    .slide {
-        flex-direction: column-reverse;
-        /* Image Top (visually), Text Bottom in DOM? 
-        Wait, flexbox direction reverse puts last item first. DOM: Text first, Image second.
-        So column-reverse puts Image (2nd) on top, Text (1st) on bottom. */
-        padding: 30px 20px;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .imageSection {
-        flex: 0 0 200px;
-        /* Fixed height for image area */
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .bannerImage {
-        max-height: 100%;
-    }
-
-    .textSection {
-        padding-right: 0;
-        align-items: center;
-        flex: 0 0 auto;
+    .contentWrapper {
+        padding: 0 2.5rem;
+        gap: 2rem;
     }
 
     .headline {
-        font-size: 1.8rem;
+        font-size: 2.5rem;
+    }
+
+    .iconSection {
+        flex: 0 0 300px;
+    }
+
+    .iconCircle {
+        width: 220px;
+        height: 220px;
+    }
+
+    .iconCircle svg {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bannerContainer {
+        height: 500px;
+        border-radius: 12px;
+    }
+
+    .contentWrapper {
+        flex-direction: column;
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .textSection {
+        align-items: center;
+    }
+
+    .headline {
+        font-size: 2rem;
+    }
+
+    .tagline {
+        font-size: 1.125rem;
     }
 
     .description {
-        font-size: 0.95rem;
-        margin-bottom: 20px;
+        font-size: 1rem;
+        max-width: 100%;
+    }
+
+    .buttonGroup {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .iconSection {
+        flex: 0 0 auto;
+    }
+
+    .iconCircle {
+        width: 180px;
+        height: 180px;
+    }
+
+    .iconCircle svg {
+        width: 50px;
+        height: 50px;
     }
 
     .arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    .leftArrow {
+        left: 1rem;
+    }
+
+    .rightArrow {
+        right: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bannerContainer {
+        height: 450px;
+    }
+
+    .contentWrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .headline {
+        font-size: 1.75rem;
+    }
+
+    .tagline {
+        font-size: 1rem;
+    }
+
+    .description {
+        font-size: 0.9375rem;
+    }
+
+    .primaryBtn,
+    .secondaryBtn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9375rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .buttonGroup {
+        width: 100%;
+    }
+
+    .iconCircle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .iconCircle svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .decorCircle1,
+    .decorCircle2 {
         display: none;
-        /* Hide arrows on mobile for cleaner look, rely on swipe/dots */
     }
 }
