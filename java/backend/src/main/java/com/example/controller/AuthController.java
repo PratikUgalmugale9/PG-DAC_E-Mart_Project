@@ -8,6 +8,8 @@ import com.example.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.example.service.EmailService; // Added by Hamzah
+
 
 @RestController
 @RequestMapping("/auth")
@@ -18,6 +20,10 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     private final UserService userService;
+
+    @Autowired
+    private EmailService emailService; // Added by Hamzah
+
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -44,6 +50,9 @@ public class AuthController {
 
         User user = userService.login(dto.getEmail(), dto.getPassword());
 
+        // Added by Hamzah - send login success email
+        emailService.sendLoginSuccessMail(user);
+
         String token = jwtUtil.generateToken(user.getEmail());
 
         LoginResponseDTO response = new LoginResponseDTO();
@@ -52,7 +61,7 @@ public class AuthController {
         response.setEmail(user.getEmail());
         response.setToken(token);
         response.setMessage("Login successful");
-
+ 
         return response;
     }
 

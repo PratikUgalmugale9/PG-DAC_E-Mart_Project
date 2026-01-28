@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.dto.PaymentRequestDTO;
 import com.example.dto.PaymentResponseDTO;
+import com.example.entity.OrderItem;
 import com.example.entity.Ordermaster;
+import com.example.repository.OrderItemRepository;
+import com.example.repository.OrderRepository;
 import com.example.entity.Payment;
 import com.example.entity.User;
 import com.example.repository.PaymentRepository;
@@ -18,6 +21,19 @@ import com.example.repository.PaymentRepository;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+	@Autowired
+	private EmailService emailService; // Added by Hamzah
+
+	@Autowired
+	private InvoicePdfService invoicePdfService; // Added by Hamzah
+
+	@Autowired
+	private OrderRepository orderRepository; // Added by Hamzah
+	
+	@Autowired
+	private OrderItemRepository orderItemRepository; // Added by Hamzah
+
+	
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -48,6 +64,30 @@ public PaymentResponseDTO createPayment(PaymentRequestDTO dto) {
     payment.setPaymentDate(Instant.now());
 
     Payment saved = paymentRepository.save(payment);
+ // Added by Hamzah - payment success mail with invoice
+    if ("SUCCESS".equalsIgnoreCase(saved.getPaymentStatus())) {
+
+        Ordermaster orderMaster =
+                orderRepository.findById(saved.getOrder().getId())
+                        .orElseThrow(() -> new RuntimeException("Order not found"));
+
+     // Added by Hamzah - fetch order items separately
+        List<OrderItem> items =
+                orderItemRepository.findByOrder_Id(orderMaster.getId());
+
+        byte[] invoicePdf =
+                invoicePdfService.generateInvoiceAsBytes(orderMaster, items);
+
+        try {
+            emailService.sendPaymentSuccessMail(orderMaster, invoicePdf);
+        } catch (Exception e) {
+            // Added by Hamzah - email failure should not break payment flow
+            e.printStackTrace();
+        }
+
+    }
+
+
     return mapToDTO(saved);
 }
 
