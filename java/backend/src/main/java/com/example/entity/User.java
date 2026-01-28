@@ -26,18 +26,22 @@ public class User {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email format is invalid")
-    @Column(name = "email", nullable = false,unique = true, length = 100)
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
     @Column(name = "mobile", length = 15, unique = true)
     private String mobile;
 
-    @NotBlank(message = "Password is required")
-    @Column(name = "password_hash", nullable = false)
+    // 🔴 IMPORTANT: password can be NULL for Google users
+    @Column(name = "password_hash", nullable = true)
     private String passwordHash;
 
     @Column(name = "address", length = 255)
     private String address;
+
+    // 🔴 NEW FIELD — tells how user registered
+    @Column(name = "provider", length = 20, nullable = false)
+    private String provider; // LOCAL or GOOGLE
 
     // -------- GETTERS & SETTERS --------
 
@@ -95,5 +99,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 }

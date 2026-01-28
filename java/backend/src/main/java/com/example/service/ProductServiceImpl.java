@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.entity.Product;
 import com.example.repository.ProductRepository;
-import com.example.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
+    // 🔥 CORE METHOD USED IN CATEGORY BROWSING
     @Override
     public List<Product> getProductsByCategory(Integer categoryId) {
         return productRepository.findByCategoryId(categoryId);

@@ -23,6 +23,8 @@ class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    // ---------------- HELPER ----------------
+
     private void validateUniqueFields(User user) {
 
         userRepository.findByEmail(user.getEmail())
@@ -31,19 +33,27 @@ class UserServiceImpl implements UserService {
                             "Email already exists: " + user.getEmail());
                 });
 
-        userRepository.findByMobile(user.getMobile())
-                .ifPresent(u -> {
-                    throw new GlobalExceptionHandler.DuplicateFieldException(
-                            "Mobile number already exists: " + user.getMobile());
-                });
+        if (user.getMobile() != null) {
+            userRepository.findByMobile(user.getMobile())
+                    .ifPresent(u -> {
+                        throw new GlobalExceptionHandler.DuplicateFieldException(
+                                "Mobile number already exists: " + user.getMobile());
+                    });
+        }
     }
+
+    // ---------------- BASIC CRUD ----------------
 
     @Override
     public User saveUser(User user) {
         validateUniqueFields(user);
-        // 🔐 Encode password before storing
-        user.setPasswordHash(
-                passwordEncoder.encode(user.getPasswordHash()));
+
+        // 🔐 Encode password before storing (only if present)
+        if (user.getPasswordHash() != null) {
+            user.setPasswordHash(
+                    passwordEncoder.encode(user.getPasswordHash()));
+        }
+
         return userRepository.save(user);
     }
 
@@ -62,7 +72,6 @@ class UserServiceImpl implements UserService {
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        userRepository.deleteById(id);
         userRepository.delete(user);
     }
 
@@ -81,7 +90,8 @@ class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-    // REGISTER USER
+    // ---------------- NORMAL REGISTER (LOCAL USER) ----------------
+
     @Override
     public User register(User user) {
 
@@ -89,27 +99,55 @@ class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already registered");
         }
 
-        // 🔐 HASH PASSWORD BEFORE SAVING
-        user.setPasswordHash(
-                passwordEncoder.encode(user.getPasswordHash())
-        );
+        // 🔥 VERY IMPORTANT — SET PROVIDER
+        user.setProvider("LOCAL");
 
-        return userRepository.save(user);
+        // 🔐 HASH PASSWORD
+        user.setPasswordHash(
+                passwordEncoder.encode(user.getPasswordHash()));
+
+        User savedUser = userRepository.save(user);
+
+        return savedUser;
     }
 
-    // LOGIN USER
+    // ---------------- NORMAL LOGIN ----------------
+
     @Override
     public User login(String email, String password) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // 🔴 If this is a GOOGLE user, block normal login
+        if ("GOOGLE".equals(user.getProvider())) {
+            throw new RuntimeException("Please login using Google");
+        }
+
         // 🔐 VERIFY PASSWORD
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return user; // later you will generate JWT here
+        return user; // JWT will be generated in controller
     }
 
+    // ---------------- GOOGLE LOGIN (SSO) ----------------
+
+    @Override
+    public User loginWithGoogle(String email, String fullName) {
+
+        // Check if user already exists
+        return userRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    // 🔥 First time Google user → create new account automatically
+                    User newUser = new User();
+                    newUser.setEmail(email);
+                    newUser.setFullName(fullName);
+                    newUser.setProvider("GOOGLE");
+                    newUser.setPasswordHash(null); // no password for Google users
+
+                    return userRepository.save(newUser);
+                });
+    }
 }

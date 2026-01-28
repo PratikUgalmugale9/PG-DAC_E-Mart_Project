@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { GoogleLogin } from "@react-oauth/google";   // 🔥 VERY IMPORTANT
+import { GoogleLogin } from "@react-oauth/google";
+import {jwtDecode} from "jwt-decode"; // 🔥 IMPORTANT
 import "../styles/Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +44,7 @@ function Login() {
     };
   }, [isFlipped]);
 
+  // ---------------- VALIDATION ----------------
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
@@ -86,56 +88,55 @@ function Login() {
     return isValid;
   };
 
+  // ---------------- NORMAL LOGIN ----------------
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+      const response = await axios.post("http://localhost:8080/auth/login", {
+        email: email,
+        password: password,
       });
 
-      if (!response.ok) {
-        const msg = await response.text();
-        alert("❌ Login failed: " + msg);
-        return;
-      }
+      const user = response.data;
 
-      const user = await response.json();
       console.log("✅ Login Success:", user);
 
       alert("🎉 Login Successful!");
 
-      // save user info
+      // 🔥 SAVE USER + TOKEN
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", user.token);
 
-      // 🔥 PERFECT REDIRECT
       navigate("/home");
 
     } catch (error) {
-      console.error("❌ Error during login:", error);
-      alert("Server error. Please try again later.");
+      console.error("❌ Error:", error);
+
+      if (error.response) {
+        const backendMessage =
+          error.response.data?.message || error.response.data || "Login failed";
+
+        alert("❌ " + backendMessage);
+      } else {
+        alert("❌ Server error. Please try again later.");
+      }
     }
   };
 
-
+  // ---------------- REGISTER ----------------
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
+    // 🔥 VERY IMPORTANT — passwordHash NOT password
     const userData = {
       fullName: regName,
       email: regEmail,
       mobile: regMobile,
       address: regAddress,
-      password: regPassword
+      passwordHash: regPassword
     };
 
     try {
@@ -147,7 +148,7 @@ function Login() {
       console.log("✅ Registered User:", response.data);
       alert("🎉 Registration successful!");
 
-      // optional: flip back to login
+      // flip back to login
       setIsFlipped(false);
 
       // clear form
@@ -162,14 +163,15 @@ function Login() {
       console.error("❌ Error:", error);
 
       if (error.response) {
-        alert("❌ " + error.response.data.message || "Registration failed");
+        const backendMessage =
+          error.response.data?.message || error.response.data || "Registration failed";
+
+        alert("❌ " + backendMessage);
       } else {
         alert("❌ Server error. Please try again later.");
       }
     }
   };
-
-
 
   return (
     <div className="login-container">
@@ -215,14 +217,51 @@ function Login() {
                   <span>OR</span>
                 </div>
 
-                {/* 🔥 REAL GOOGLE LOGIN BUTTON */}
+                {/* 🔥 GOOGLE LOGIN FULLY CONNECTED */}
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <GoogleLogin
-                    onSuccess={(credentialResponse) => {
-                      console.log("✅ Google Token:", credentialResponse.credential);
+                    onSuccess={async (credentialResponse) => {
+                      try {
+                        const decoded = jwtDecode(credentialResponse.credential);
+
+                        console.log("✅ Google User:", decoded);
+
+                        const googleUser = {
+                          email: decoded.email,
+                          fullName: decoded.name,
+                        };
+
+                        const response = await axios.post(
+                          "http://localhost:8080/auth/google",
+                          googleUser
+                        );
+
+                        console.log("✅ Backend Google Login Success:", response.data);
+
+                        alert("🎉 Google Login Successful!");
+
+                        // 🔥 SAVE USER + TOKEN
+                        localStorage.setItem("user", JSON.stringify(response.data));
+                        localStorage.setItem("token", response.data.token);
+
+                        navigate("/home");
+
+                      } catch (error) {
+                        console.error("❌ Google Login Error:", error);
+
+                        if (error.response) {
+                          const backendMessage =
+                            error.response.data?.message || error.response.data || "Google login failed";
+
+                          alert("❌ " + backendMessage);
+                        } else {
+                          alert("❌ Google login failed. Try again.");
+                        }
+                      }
                     }}
                     onError={() => {
                       console.log("❌ Google Login Failed");
+                      alert("Google login failed");
                     }}
                   />
                 </div>

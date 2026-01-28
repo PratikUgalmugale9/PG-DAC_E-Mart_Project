@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,21 +14,25 @@ public class Product {
     @Column(name = "prod_id")
     private Integer id;
 
-
-    // added for cartitem relationship, one product in many cartitem
+    // one product can be in many cart items
     @OneToMany(mappedBy = "prod")
+    @JsonIgnore
     private List<Cartitem> cartItems;
 
+    // FK to catmaster.id
     @Column(name = "cat_master_id", nullable = false)
     private Integer categoryId;
 
     @Column(name = "prod_name", nullable = false, length = 150)
     private String prodName;
 
+    // 🔥🔥🔥 THIS WAS MISSING — VERY IMPORTANT
+    @Column(name = "prod_image_path", length = 255)
+    private String prodImagePath;
+
     @Column(name = "prod_short_desc", length = 255)
     private String prodShortDesc;
 
-    // IMPORTANT: Matches MySQL TEXT exactly
     @Column(name = "prod_long_desc", columnDefinition = "TEXT")
     private String prodLongDesc;
 
@@ -40,24 +45,12 @@ public class Product {
     @Column(name = "points_2b_redeem")
     private Integer pointsToBeRedeem;
 
-    // ---------------- Constructors ----------------
+    // ---------- Constructors ----------
 
     public Product() {
     }
 
-    public Product(Integer categoryId, String prodName, String prodShortDesc,
-                   String prodLongDesc, BigDecimal mrpPrice,
-                   BigDecimal cardholderPrice, Integer pointsToBeRedeem) {
-        this.categoryId = categoryId;
-        this.prodName = prodName;
-        this.prodShortDesc = prodShortDesc;
-        this.prodLongDesc = prodLongDesc;
-        this.mrpPrice = mrpPrice;
-        this.cardholderPrice = cardholderPrice;
-        this.pointsToBeRedeem = pointsToBeRedeem;
-    }
-
-    // ---------------- Getters & Setters ----------------
+    // ---------- Getters & Setters ----------
 
     public Integer getId() {
         return id;
@@ -81,6 +74,15 @@ public class Product {
 
     public void setProdName(String prodName) {
         this.prodName = prodName;
+    }
+
+    // 🔥🔥🔥 VERY IMPORTANT GETTER & SETTER
+    public String getProdImagePath() {
+        return prodImagePath;
+    }
+
+    public void setProdImagePath(String prodImagePath) {
+        this.prodImagePath = prodImagePath;
     }
 
     public String getProdShortDesc() {

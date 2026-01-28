@@ -13,6 +13,6 @@ public interface ProductService {
 
     void deleteProduct(Integer id);
 
+    // 🔥 THIS METHOD MUST EXIST
     List<Product> getProductsByCategory(Integer categoryId);
-
 }

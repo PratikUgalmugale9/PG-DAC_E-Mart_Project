@@ -5,9 +5,10 @@ import com.example.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-
+@CrossOrigin(origins = "http://localhost:5173") // 🔥 React support
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -44,6 +45,7 @@ public class ProductController {
         return ResponseEntity.ok("Product deleted successfully");
     }
 
+    // 🔥 GET products by category (used by CatalogService also)
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Product>> getProductsByCategory(
             @PathVariable Integer categoryId) {

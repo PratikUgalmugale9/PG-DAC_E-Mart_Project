@@ -13,6 +13,7 @@ import com.example.service.EmailService; // Added by Hamzah
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:5173") // adjust if needed
 public class AuthController {
 
     @Autowired
@@ -28,40 +29,22 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // REGISTER
+    // ---------------- NORMAL REGISTER ----------------
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public LoginResponseDTO register(@RequestBody User user) {
+
+        User savedUser = userService.register(user);
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setUserId(savedUser.getId());
+        response.setFullName(savedUser.getFullName());
+        response.setEmail(savedUser.getEmail());
+        response.setMessage("Registration successful");
+
+        return response;
     }
 
-    // LOGIN
-//    @PostMapping("/login")
-//    public User login(
-//            @RequestParam String email,
-//            @RequestParam String password
-//    ) {
-//        return userService.login(email, password);
-//    }
-
-//    @PostMapping("/login")
-//    public User login(@Valid @RequestBody LoginRequestDTO dto) {
-//        return userService.login(dto.getEmail(), dto.getPassword());
-//    }
-
-//    @PostMapping("/login")
-//    public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {
-//
-//        User user = userService.login(dto.getEmail(), dto.getPassword());
-//
-//        LoginResponseDTO response = new LoginResponseDTO();
-//        response.setUserId(user.getId());
-//        response.setFullName(user.getFullName());
-//        response.setEmail(user.getEmail());
-//        response.setMessage("Login successful");
-//
-//        return response;
-//    }
-
+    // ---------------- NORMAL LOGIN ----------------
     @PostMapping("/login")
     public LoginResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {
 
@@ -79,6 +62,28 @@ public class AuthController {
         response.setToken(token);
         response.setMessage("Login successful");
  
+        return response;
+    }
+
+    // ---------------- 🔥 GOOGLE LOGIN (SSO) ----------------
+    @PostMapping("/google")
+    public LoginResponseDTO googleLogin(@RequestBody GoogleLoginRequest request) {
+
+        // Auto create user if first time, else fetch existing
+        User user = userService.loginWithGoogle(
+                request.getEmail(),
+                request.getFullName());
+
+        // Generate JWT
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setUserId(user.getId());
+        response.setFullName(user.getFullName());
+        response.setEmail(user.getEmail());
+        response.setToken(token);
+        response.setMessage("Google login successful");
+
         return response;
     }
 }
