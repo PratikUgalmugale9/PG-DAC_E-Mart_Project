@@ -1,96 +1,124 @@
 package com.example.service;
 
-
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dto.PaymentRequestDTO;
 import com.example.dto.PaymentResponseDTO;
-import com.example.entity.OrderItem;
-import com.example.entity.Ordermaster;
-import com.example.repository.OrderItemRepository;
-import com.example.repository.OrderRepository;
-import com.example.entity.Payment;
-import com.example.entity.User;
-import com.example.repository.PaymentRepository;
+import com.example.entity.*;
+import com.example.repository.*;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-	@Autowired
-	private EmailService emailService; // Added by Hamzah
-
-	@Autowired
-	private InvoicePdfService invoicePdfService; // Added by Hamzah
-
-	@Autowired
-	private OrderRepository orderRepository; // Added by Hamzah
-	
-	@Autowired
-	private OrderItemRepository orderItemRepository; // Added by Hamzah
-
-	
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private InvoicePdfService invoicePdfService;
+
+    @Autowired
+    private EmailService emailService;
+
+    // ==================================================
+    // MAIN PAYMENT FLOW (TRANSACTIONAL)
+    // ==================================================
     @Override
-public PaymentResponseDTO createPayment(PaymentRequestDTO dto) {
+    @Transactional
+    public PaymentResponseDTO createPayment(PaymentRequestDTO dto) {
 
-    Payment payment = new Payment();
+        // 1️⃣ FETCH USER
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    Ordermaster order = new Ordermaster();
-    order.setId(dto.getOrderId());
+        // 2️⃣ FETCH ACTIVE CART
+        Cart cart = cartRepository
+                .findByUser_IdAndIsActive(dto.getUserId(), 'Y')
+                .orElseThrow(() -> new RuntimeException("Active cart not found"));
 
-    User user = new User();
-    user.setId(dto.getUserId());
+        // 3️⃣ FETCH CART ITEMS
+        List<Cartitem> cartItems = cartItemRepository.findByCart_Id(cart.getId());
 
-    payment.setOrder(order);
-    payment.setUser(user);
-    payment.setAmountPaid(dto.getAmountPaid());
-    payment.setPaymentMode(dto.getPaymentMode());
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Cart is empty, cannot place order");
+        }
 
-    // ✅ ADD THIS LINE HERE
-    payment.setPaymentStatus(
-            dto.getPaymentStatus() != null ? dto.getPaymentStatus() : "initiated"
-    );
+        // 4️⃣ CREATE ORDER MASTER
+        Ordermaster order = new Ordermaster();
+        order.setUser(user);
+        order.setTotalAmount(dto.getAmountPaid());
+        order.setOrderStatus("PAID");
+        order.setPaymentMode("RAZORPAY");
 
-    payment.setTransactionId(dto.getTransactionId());
+        order = orderRepository.save(order);
 
-    // ✅ Always set payment date
-    payment.setPaymentDate(Instant.now());
+        // 5️⃣ CREATE ORDER ITEMS FROM CART
+        for (Cartitem ci : cartItems) {
+            OrderItem oi = new OrderItem();
+            oi.setOrder(order);
+            oi.setProduct(ci.getProd()); // ✅ correct mapping
+            oi.setQuantity(ci.getQuantity());
+            oi.setPrice(ci.getPriceSnapshot());
 
-    Payment saved = paymentRepository.save(payment);
- // Added by Hamzah - payment success mail with invoice
-    if ("SUCCESS".equalsIgnoreCase(saved.getPaymentStatus())) {
+            orderItemRepository.save(oi);
+        }
 
-        Ordermaster orderMaster =
-                orderRepository.findById(saved.getOrder().getId())
-                        .orElseThrow(() -> new RuntimeException("Order not found"));
+        // 6️⃣ SAVE PAYMENT
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setUser(user);
+        payment.setAmountPaid(dto.getAmountPaid());
+        payment.setPaymentMode("RAZORPAY");
+        payment.setPaymentStatus("SUCCESS");
+        payment.setTransactionId(dto.getTransactionId());
+        payment.setPaymentDate(Instant.now());
 
-     // Added by Hamzah - fetch order items separately
-        List<OrderItem> items =
-                orderItemRepository.findByOrder_Id(orderMaster.getId());
+        Payment savedPayment = paymentRepository.save(payment);
 
-        byte[] invoicePdf =
-                invoicePdfService.generateInvoiceAsBytes(orderMaster, items);
+        // 7️⃣ GENERATE INVOICE + SEND EMAIL
+        List<OrderItem> orderItems = orderItemRepository.findByOrder_Id(order.getId());
+
+        byte[] invoicePdf = invoicePdfService.generateInvoiceAsBytes(order, orderItems);
 
         try {
-            emailService.sendPaymentSuccessMail(orderMaster, invoicePdf);
+            emailService.sendPaymentSuccessMail(order, invoicePdf);
         } catch (Exception e) {
-            // Added by Hamzah - email failure should not break payment flow
+            // Email failure should NOT rollback payment
             e.printStackTrace();
         }
 
+        // 8️⃣ CLEAR CART
+        cartItemRepository.deleteAll(cartItems);
+        cart.setIsActive('N');
+        cartRepository.save(cart);
+
+        // 9️⃣ RETURN RESPONSE
+        return mapToDTO(savedPayment);
     }
 
-
-    return mapToDTO(saved);
-}
-
+    // ==================================================
+    // READ METHODS
+    // ==================================================
     @Override
     public List<PaymentResponseDTO> getAllPayments() {
         return paymentRepository.findAll()
@@ -114,23 +142,24 @@ public PaymentResponseDTO createPayment(PaymentRequestDTO dto) {
                 .collect(Collectors.toList());
     }
 
-    // 🔁 Mapper method
-   private PaymentResponseDTO mapToDTO(Payment p) {
-    PaymentResponseDTO dto = new PaymentResponseDTO();
-    dto.setPaymentId(p.getId());
-    dto.setAmountPaid(p.getAmountPaid());
-    dto.setPaymentMode(p.getPaymentMode());
-    dto.setPaymentStatus(p.getPaymentStatus());
-    dto.setTransactionId(p.getTransactionId());
-    dto.setPaymentDate(p.getPaymentDate());
+    // ==================================================
+    // DTO MAPPER
+    // ==================================================
+    private PaymentResponseDTO mapToDTO(Payment p) {
 
-    dto.setOrderId(p.getOrder().getId());
-    dto.setUserId(p.getUser().getId());
+        PaymentResponseDTO dto = new PaymentResponseDTO();
+        dto.setPaymentId(p.getId());
+        dto.setAmountPaid(p.getAmountPaid());
+        dto.setPaymentMode(p.getPaymentMode());
+        dto.setPaymentStatus(p.getPaymentStatus());
+        dto.setTransactionId(p.getTransactionId());
+        dto.setPaymentDate(p.getPaymentDate());
 
-    dto.setUserName(p.getUser().getFullName());
-    dto.setUserEmail(p.getUser().getEmail());
+        dto.setOrderId(p.getOrder().getId());
+        dto.setUserId(p.getUser().getId());
+        dto.setUserName(p.getUser().getFullName());
+        dto.setUserEmail(p.getUser().getEmail());
 
-    return dto;
-}
-
+        return dto;
+    }
 }
