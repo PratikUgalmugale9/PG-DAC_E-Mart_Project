@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/CartPage.module.css";
 import { useCart } from "../context/CartContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
 
+    const navigate=useNavigate();
     const { cartItems, updateQuantity, removeFromCart } = useCart();
     const [summary, setSummary] = useState({
         mrpTotal: 0,
@@ -288,7 +290,7 @@ const CartPage = () => {
                             </div>
                         </div>
 
-                        <button className={styles.checkoutBtn}>
+                        <button className={styles.checkoutBtn} onClick={() => navigate("/checkout/address")}>
                             <span>PROCEED TO CHECKOUT</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>

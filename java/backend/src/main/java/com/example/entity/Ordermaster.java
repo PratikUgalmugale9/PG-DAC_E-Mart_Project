@@ -21,7 +21,6 @@ public class Ordermaster {
     @Column(name = "order_date", insertable = false, updatable = false)
     private Instant orderDate;
 
-
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
@@ -31,6 +30,9 @@ public class Ordermaster {
 
     @Column(name = "payment_mode", length = 30)
     private String paymentMode;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<OrderItem> items;
 
     public Integer getId() {
         return id;
@@ -80,4 +82,11 @@ public class Ordermaster {
         this.paymentMode = paymentMode;
     }
 
-}	
+    public java.util.List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(java.util.List<OrderItem> items) {
+        this.items = items;
+    }
+}

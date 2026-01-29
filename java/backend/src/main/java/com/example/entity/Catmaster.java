@@ -8,26 +8,26 @@ import org.hibernate.annotations.ColumnDefault;
 public class Catmaster {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CatMaster_Id", nullable = false)
+    @Column(name = "cat_master_id", nullable = false)
     private Integer id;
 
-    @Column(name = "Cat_Id", nullable = false, length = 10)
+    @Column(name = "cat_id", nullable = false, length = 10)
     private String catId;
 
-//    @Column(name = "SubCat_Id", length = 10)
-//    private String subcatId;
+    // @Column(name = "SubCat_Id", length = 10)
+    // private String subcatId;
 
     @Column(name = "sub_cat_id")
     private String subcatId;
 
-    @Column(name = "Cat_Name", nullable = false, length = 100)
+    @Column(name = "cat_name", nullable = false, length = 100)
     private String catName;
 
-    @Column(name = "Cat_Image_Path")
+    @Column(name = "cat_image_path")
     private String catImagePath;
 
     @ColumnDefault("'N'")
-    @Column(name = "Flag")
+    @Column(name = "flag")
     private Character flag;
 
     public Integer getId() {

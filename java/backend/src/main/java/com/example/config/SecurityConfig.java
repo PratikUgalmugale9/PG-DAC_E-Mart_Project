@@ -54,6 +54,8 @@ public class SecurityConfig {
                         // PROTECTED APIS
                         .requestMatchers("/api/cartitem/**").authenticated()
                         .requestMatchers("/cart/**").authenticated()
+                        .requestMatchers("/api/address/**").authenticated()
+
                         // .requestMatchers("/orders/**").authenticated()
                         // .requestMatchers("/payment/**").authenticated()
 
@@ -72,7 +74,7 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // React URL
+        config.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:5174")); // React URL
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

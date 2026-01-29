@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import CartPage from './pages/CartPage';
 import BrowseCategory from './pages/BrowseCategory';
+import CheckoutAddress from './pages/CheckoutAddress';
 
 // 🔥 CART CONTEXT
 import { CartProvider } from './context/CartContext';
@@ -41,22 +42,24 @@ function App() {
 
           <NavigationWrapper />
 
-          <div className="main-layout">
-            <Routes>
-              {/* AUTH */}
-              <Route path="/" element={<Login />} />
-              <Route path="/login" element={<Login />} />
+          <Routes>
+            {/* AUTH */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
 
-              {/* HOME */}
-              <Route path="/home" element={<HomePage />} />
+            {/* HOME */}
+            <Route path="/home" element={<HomePage />} />
 
-              {/* CATEGORY BROWSE */}
-              <Route path="/browse/:catId" element={<BrowseCategory />} />
+            {/* checkoutaddress */}
+            <Route path="/checkout/address" element={<CheckoutAddress />} />
 
-              {/* CART */}
-              <Route path="/cart" element={<CartPage />} />
-            </Routes>
-          </div>
+
+            {/* CATEGORY BROWSE */}
+            <Route path="/browse/:catId" element={<BrowseCategory />} />
+
+            {/* CART */}
+            <Route path="/cart" element={<CartPage />} />
+          </Routes>
 
           <Footer />
 
