@@ -90,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
         cartItemRepository.deleteAll(cartItems);
 
         // ✅ Optional: attach items in response
-        savedOrder.setItems(orderItems);
+        // savedOrder.setItems(orderItems);
 
         // ✅ Return saved order
         return savedOrder;
