@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
+
 import ScrollToTop from "./components/ScrollToTop";
 
 /* LAYOUT */
@@ -22,62 +23,58 @@ import { CartProvider } from './context/CartContext';
 const NavigationWrapper = () => {
   const navigate = useNavigate();
 
-  const handleCartClick = () => {
-    navigate('/cart');
-  };
-
-  const handleLogoClick = () => {
-    navigate('/home');
-  };
-
   return (
     <Navbar
-      onCartClick={handleCartClick}
-      onLogoClick={handleLogoClick}
+      onCartClick={() => navigate('/cart')}
+      onLogoClick={() => navigate('/home')}
     />
   );
 };
 
 function App() {
   return (
-    <ScrollToTop />   {/* ✅ MUST be here */ }
-  <CartProvider>
-    <div className="App">
-      <BrowserRouter>
+    <BrowserRouter>
+      <CartProvider>
 
-        {/* NAVBAR */}
-        <NavigationWrapper />
+        {/* ✅ SCROLL RESET ON ROUTE CHANGE */}
+        <ScrollToTop />
 
-        {/* ROUTES */}
-        <Routes>
+        <div className="App">
 
-          {/* AUTH */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
+          {/* NAVBAR */}
+          <NavigationWrapper />
 
-          {/* HOME */}
-          <Route path="/home" element={<HomePage />} />
+          {/* ROUTES */}
+          <Routes>
 
-          {/* CHECKOUT */}
-          <Route path="/checkout/address" element={<CheckoutAddress />} />
+            {/* AUTH */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
 
-          {/* PAYMENT */}
-          <Route path="/payment" element={<Payment />} />
+            {/* HOME */}
+            <Route path="/home" element={<HomePage />} />
 
-          {/* CATEGORY */}
-          <Route path="/browse/:catId" element={<BrowseCategory />} />
+            {/* CHECKOUT */}
+            <Route path="/checkout/address" element={<CheckoutAddress />} />
 
-          {/* CART */}
-          <Route path="/cart" element={<CartPage />} />
+            {/* PAYMENT */}
+            <Route path="/payment" element={<Payment />} />
 
-        </Routes>
+            {/* CATEGORY */}
+            <Route path="/browse/:catId" element={<BrowseCategory />} />
 
-        {/* FOOTER */}
-        <Footer />
+            {/* CART */}
+            <Route path="/cart" element={<CartPage />} />
 
-      </BrowserRouter>
-    </div>
-  </CartProvider>
+          </Routes>
+
+          {/* FOOTER */}
+          <Footer />
+
+        </div>
+
+      </CartProvider>
+    </BrowserRouter>
   );
 }
 

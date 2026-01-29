@@ -1,7 +1,14 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const CheckoutPayment = () => {
+
+    const navigate = useNavigate();
+
+    // 🔥 CART CONTEXT
+    const { clearCart, refreshCart } = useCart();
 
     // 🔐 Logged-in user
     const user = JSON.parse(localStorage.getItem("user"));
@@ -10,16 +17,16 @@ const CheckoutPayment = () => {
     // 💰 Amount from cart
     const totalAmount = Number(localStorage.getItem("payableAmount")) || 0;
 
-    // 🧾 Demo order id (replace later with real order)
-    const orderId = 1;
-
-    // 🚀 Open Razorpay immediately
+    // 🚀 Open Razorpay when page loads
     useEffect(() => {
         if (!totalAmount || totalAmount <= 0) {
             alert("Invalid payment amount");
+            navigate("/cart");
             return;
         }
+
         openRazorpay();
+        // eslint-disable-next-line
     }, []);
 
     const openRazorpay = () => {
@@ -38,24 +45,32 @@ const CheckoutPayment = () => {
 
             handler: async function (response) {
                 try {
+                    // ✅ SAVE PAYMENT
                     await axios.post(
                         "http://localhost:8080/payments",
                         {
-                            orderId: orderId,
                             userId: userId,
                             amountPaid: totalAmount,
-                            paymentMode: "RAZORPAY",          // ✅ REQUIRED
-                            paymentStatus: "SUCCESS",         // ✅ REQUIRED
+                            paymentMode: "RAZORPAY",
+                            paymentStatus: "SUCCESS",
                             transactionId: response.razorpay_payment_id
                         }
                     );
 
+                    // 🔥 VERY IMPORTANT
+                    clearCart();      // clear frontend cart instantly
+                    await refreshCart(); // sync with backend
+
+                    // Cleanup
+                    localStorage.removeItem("payableAmount");
+
                     alert("Payment successful 🎉");
-                    // Optional: redirect to success page
-                    // window.location.href = "/order-success";
+
+                    // ✅ Redirect user
+                    navigate("/home");
 
                 } catch (err) {
-                    console.error("Payment save error:", err);
+                    console.error("❌ Payment save error:", err);
                     alert("Payment save failed");
                 }
             },
@@ -63,6 +78,7 @@ const CheckoutPayment = () => {
             modal: {
                 ondismiss: function () {
                     alert("Payment cancelled");
+                    navigate("/cart");
                 }
             }
         };
@@ -71,7 +87,7 @@ const CheckoutPayment = () => {
         rzp.open();
     };
 
-    // No UI, direct Razorpay popup
+    // No UI – Razorpay opens directly
     return null;
 };
 
