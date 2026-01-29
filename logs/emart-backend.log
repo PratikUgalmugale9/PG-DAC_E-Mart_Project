@@ -1,0 +1,7 @@
+2026-01-30T00:00:05.422+05:30  INFO 19440 --- [E-Mart] [http-nio-8080-exec-3] com.example.service.UserServiceImpl      : Login attempt for email: pratya@gmail.com
+2026-01-30T00:00:05.691+05:30  INFO 19440 --- [E-Mart] [http-nio-8080-exec-3] com.example.service.UserServiceImpl      : Login successful for user id: 15
+2026-01-30T00:03:06.919+05:30  INFO 19440 --- [E-Mart] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-01-30T00:03:07.113+05:30  INFO 19440 --- [E-Mart] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-01-30T00:03:07.118+05:30  INFO 19440 --- [E-Mart] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-30T00:03:07.128+05:30  INFO 19440 --- [E-Mart] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-01-30T00:03:07.138+05:30  INFO 19440 --- [E-Mart] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
