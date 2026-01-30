@@ -15,10 +15,11 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 0.5rem;
-    padding: 0 1rem;
+    gap: 1.5rem;
+    padding: 0 2rem;
     overflow-x: auto;
     scrollbar-width: none;
+    width: 100%;
 }
 
 .categoryList::-webkit-scrollbar {
@@ -70,6 +71,7 @@
     border-radius: 12px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    flex-shrink: 0;
 }
 
 .iconContainer svg {

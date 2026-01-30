@@ -20,6 +20,8 @@ const CartPage = () => {
     // 🎯 LOYALTY CARD STATE
     const [loyaltyCard, setLoyaltyCard] = useState(null);
     const [hasLoyaltyCard, setHasLoyaltyCard] = useState(false);
+    const [paymentChoice, setPaymentChoice] = useState("CASH"); // CASH, POINTS, BOTH
+    const [pointsToRedeem, setPointsToRedeem] = useState(0);
 
     // 🔥 Real API Fetch Logic
     useEffect(() => {
@@ -56,6 +58,12 @@ const CartPage = () => {
         };
 
         fetchLoyaltyData();
+
+        // Load saved redemption choices
+        const savedChoice = localStorage.getItem("paymentChoice");
+        const savedPoints = localStorage.getItem("pointsToRedeem");
+        if (savedChoice) setPaymentChoice(savedChoice);
+        if (savedPoints) setPointsToRedeem(Number(savedPoints));
     }, []);
 
     // Calculate totals with loyalty pricing
@@ -82,9 +90,33 @@ const CartPage = () => {
             subtotal,
             delivery,
             total,
-            savings
+            savings,
+            finalTotal: Math.max(0, total - pointsToRedeem)
         });
-    }, [cartItems, hasLoyaltyCard]);
+    }, [cartItems, hasLoyaltyCard, pointsToRedeem]);
+
+    // Points logic
+    const maxPointsPossible = Math.min(loyaltyCard?.pointsBalance || 0, summary.total);
+
+    useEffect(() => {
+        if (paymentChoice === "POINTS") {
+            setPointsToRedeem(maxPointsPossible);
+        } else if (paymentChoice === "CASH") {
+            setPointsToRedeem(0);
+        }
+    }, [paymentChoice, maxPointsPossible]);
+
+    const handlePointsChange = (val) => {
+        const num = parseInt(val) || 0;
+        setPointsToRedeem(Math.min(Math.max(0, num), maxPointsPossible));
+    };
+
+    const handleProceedToCheckout = () => {
+        // Save redemption choices to localStorage for Payment page
+        localStorage.setItem("paymentChoice", paymentChoice);
+        localStorage.setItem("pointsToRedeem", String(pointsToRedeem));
+        navigate("/checkout/address");
+    };
 
     if (cartItems.length === 0) {
         return (
@@ -297,9 +329,78 @@ const CartPage = () => {
                                 <span>Total Amount</span>
                                 <span className={styles.totalAmount}>₹{summary.total.toFixed(2)}</span>
                             </div>
+
+                            {hasLoyaltyCard && (
+                                <div className={styles.redemptionSection}>
+                                    <h4 className={styles.redemptionTitle}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M20 12v10H4V12"></path>
+                                            <path d="M2 7h20v5H2z"></path>
+                                            <path d="M12 22V7"></path>
+                                            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                                        </svg>
+                                        Redeem Loyalty Points
+                                    </h4>
+                                    <p className={styles.redemptionBalance}>
+                                        Available: <strong>{loyaltyCard.pointsBalance} Points</strong>
+                                    </p>
+
+                                    <div className={styles.choiceGrid}>
+                                        <button
+                                            className={`${styles.choiceBtn} ${paymentChoice === 'CASH' ? styles.choiceBtnPrimary : ''}`}
+                                            onClick={() => setPaymentChoice("CASH")}
+                                        >
+                                            Cash Only
+                                        </button>
+                                        <button
+                                            className={`${styles.choiceBtn} ${paymentChoice === 'POINTS' ? styles.choiceBtnPrimary : ''}`}
+                                            onClick={() => setPaymentChoice("POINTS")}
+                                            disabled={loyaltyCard.pointsBalance === 0}
+                                        >
+                                            Points Only
+                                        </button>
+                                        <button
+                                            className={`${styles.choiceBtn} ${paymentChoice === 'BOTH' ? styles.choiceBtnPrimary : ''}`}
+                                            onClick={() => setPaymentChoice("BOTH")}
+                                            disabled={loyaltyCard.pointsBalance === 0}
+                                        >
+                                            Both
+                                        </button>
+                                    </div>
+
+                                    {paymentChoice === "BOTH" && (
+                                        <div className={styles.pointsInputWrapper}>
+                                            <label className={styles.pointsLabel}>Points to redeem (Max {maxPointsPossible}):</label>
+                                            <div className={styles.inputGroup}>
+                                                <input
+                                                    type="number"
+                                                    className={styles.pointsInput}
+                                                    value={pointsToRedeem}
+                                                    onChange={(e) => handlePointsChange(e.target.value)}
+                                                />
+                                                <button className={styles.maxBtn} onClick={() => setPointsToRedeem(maxPointsPossible)}>MAX</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {pointsToRedeem > 0 && (
+                                <>
+                                    <div className={`${styles.summaryRow} ${styles.pointsRedeemedRow}`}>
+                                        <span>Points Redeemed</span>
+                                        <span>-₹{pointsToRedeem.toFixed(2)}</span>
+                                    </div>
+                                    <div className={`${styles.summaryRow} ${styles.totalRow} ${styles.amountToPayRow}`}>
+                                        <span>Amount to Pay</span>
+                                        <span className={styles.totalAmount}>₹{summary.finalTotal.toFixed(2)}</span>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
-                        <button className={styles.checkoutBtn} onClick={() => navigate("/checkout/address")}>
+                        <button className={styles.checkoutBtn} onClick={handleProceedToCheckout}>
                             <span>PROCEED TO CHECKOUT</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
