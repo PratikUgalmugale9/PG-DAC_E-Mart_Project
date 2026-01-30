@@ -1,66 +1,10 @@
-// import { useState } from "react";
-// import axios from "axios";
-
-// const CheckoutAddress = ({ onAddressSaved }) => {
-
-//   const [address, setAddress] = useState({
-//     fullName: "",
-//     mobile: "",
-//     houseNo: "",
-//     street: "",
-//     city: "",
-//     state: "",
-//     pincode: ""
-//   });
-
-//   const token = localStorage.getItem("token");
-
-//   const handleChange = (e) => {
-//     setAddress({ ...address, [e.target.name]: e.target.value });
-//   };
-
-//   const saveAddress = async () => {
-//     await axios.post(
-//       "http://localhost:8080/api/address/add",
-//       address,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`
-//         }
-//       }
-//     );
-
-//     onAddressSaved(); // go to payment
-//   };
-
-//   return (
-//     <div>
-//       <h2>Delivery Address</h2>
-
-//       <input name="fullName" placeholder="Full Name" onChange={handleChange} />
-//       <input name="mobile" placeholder="Mobile" onChange={handleChange} />
-//       <input name="houseNo" placeholder="House No" onChange={handleChange} />
-//       <input name="street" placeholder="Street" onChange={handleChange} />
-//       <input name="city" placeholder="City" onChange={handleChange} />
-//       <input name="state" placeholder="State" onChange={handleChange} />
-//       <input name="pincode" placeholder="Pincode" onChange={handleChange} />
-
-//       <button onClick={saveAddress}>Proceed to Payment</button>
-//     </div>
-//   );
-// };
-
-// export default CheckoutAddress;
-
-
 import { useState } from "react";
 import axios from "axios";
-import "../styles/CheckoutAddress.css";
+import styles from "../styles/CheckoutAddress.module.css";
 import { useNavigate } from "react-router-dom";
+import { FiUser, FiPhone, FiHome, FiMapPin, FiTruck, FiChevronLeft, FiPlus, FiMap } from 'react-icons/fi';
 
-
-const CheckoutAddress = ({ onProceedToPayment }) => {
-
+const CheckoutAddress = () => {
   const [address, setAddress] = useState({
     fullName: "",
     mobile: "",
@@ -71,7 +15,7 @@ const CheckoutAddress = ({ onProceedToPayment }) => {
     pincode: ""
   });
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -87,36 +31,25 @@ const CheckoutAddress = ({ onProceedToPayment }) => {
   const saveAddress = async () => {
     setError("");
 
-    // basic validation
-    if (
-      !address.fullName ||
-      !address.mobile ||
-      !address.houseNo ||
-      !address.city ||
-      !address.pincode
-    ) {
-      setError("Please fill all required fields");
+    if (!address.fullName || !address.mobile || !address.houseNo || !address.city || !address.pincode) {
+      setError("Please fill all required fields (*)");
       return;
     }
 
     try {
       setLoading(true);
 
+      // Fetch user from localStorage to get the ID if needed later, 
+      // but the backend AddressController uses Authentication principal.
       await axios.post(
         "http://localhost:8080/api/address/add",
         address,
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
 
-      // move to payment page
-      //onProceedToPayment();
-
       navigate("/payment");
-
     } catch (err) {
       console.error("Address save failed", err);
       setError("Failed to save address. Please try again.");
@@ -126,31 +59,121 @@ const CheckoutAddress = ({ onProceedToPayment }) => {
   };
 
   return (
-    <div className="checkout-container">
-      <div className="checkout-card">
-
-        <h2 className="checkout-title">Delivery Address</h2>
-
-        {error && <p className="error-text">{error}</p>}
-
-        <div className="form-grid">
-          <input name="fullName" placeholder="Full Name *" onChange={handleChange} />
-          <input name="mobile" placeholder="Mobile Number *" onChange={handleChange} />
-          <input name="houseNo" placeholder="House / Flat No *" onChange={handleChange} />
-          <input name="street" placeholder="Street / Area" onChange={handleChange} />
-          <input name="city" placeholder="City *" onChange={handleChange} />
-          <input name="state" placeholder="State" onChange={handleChange} />
-          <input name="pincode" placeholder="Pincode *" onChange={handleChange} />
-        </div>
-
-        <button
-          className="checkout-btn"
-          onClick={saveAddress}
-          disabled={loading}
-        >
-          {loading ? "Saving..." : "Proceed to Payment"}
+    <div className={styles.checkoutContainer}>
+      <div className={styles.checkoutCard}>
+        <button className={styles.backBtn} onClick={() => navigate("/cart")} style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '5px',
+          background: 'none',
+          border: 'none',
+          color: '#6b7280',
+          cursor: 'pointer',
+          marginBottom: '20px',
+          fontSize: '0.9rem',
+          padding: '0',
+          fontWeight: '600'
+        }}>
+          <FiChevronLeft /> Back to Cart
         </button>
 
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            background: 'rgba(99, 102, 241, 0.1)',
+            borderRadius: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+            color: '#6366f1'
+          }}>
+            <FiTruck size={30} />
+          </div>
+          <h2 className={styles.checkoutTitle}>Shipping Details</h2>
+          <p className={styles.checkoutSubtitle}>Where should we deliver your order?</p>
+        </div>
+
+        {error && <div className={styles.errorText}>{error}</div>}
+
+        <div className={styles.formGrid}>
+          {/* Full Name */}
+          <div className={styles.inputGroup}>
+            <label><FiUser size={14} /> Full Name *</label>
+            <div className={styles.inputWrapper}>
+              <FiUser className={styles.iconPrefix} />
+              <input name="fullName" placeholder="John Doe" onChange={handleChange} />
+            </div>
+          </div>
+
+          {/* Mobile Number */}
+          <div className={styles.inputGroup}>
+            <label><FiPhone size={14} /> Mobile Number *</label>
+            <div className={styles.inputWrapper}>
+              <FiPhone className={styles.iconPrefix} />
+              <input name="mobile" placeholder="10-digit number" onChange={handleChange} />
+            </div>
+          </div>
+
+          {/* House No */}
+          <div className={styles.inputGroup}>
+            <label><FiHome size={14} /> House / Flat No *</label>
+            <div className={styles.inputWrapper}>
+              <FiHome className={styles.iconPrefix} />
+              <input name="houseNo" placeholder="House #123" onChange={handleChange} />
+            </div>
+          </div>
+
+          {/* Street */}
+          <div className={styles.inputGroup}>
+            <label><FiMapPin size={14} /> Street / Area</label>
+            <div className={styles.inputWrapper}>
+              <FiMapPin className={styles.iconPrefix} />
+              <input name="street" placeholder="Main Road, Sector 4" onChange={handleChange} />
+            </div>
+          </div>
+
+          {/* City */}
+          <div className={styles.inputGroup}>
+            <label><FiMap size={14} /> City *</label>
+            <div className={styles.inputWrapper}>
+              <FiMap className={styles.iconPrefix} />
+              <input name="city" placeholder="Mumbai" onChange={handleChange} />
+            </div>
+          </div>
+
+          {/* State */}
+          <div className={styles.inputGroup}>
+            <label><FiMapPin size={14} /> State</label>
+            <div className={styles.inputWrapper}>
+              <FiMapPin className={styles.iconPrefix} />
+              <input name="state" placeholder="Maharashtra" onChange={handleChange} />
+            </div>
+          </div>
+
+          {/* Pincode */}
+          <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+            <label><FiMapPin size={14} /> Pincode *</label>
+            <div className={styles.inputWrapper}>
+              <FiMapPin className={styles.iconPrefix} />
+              <input name="pincode" placeholder="400001" onChange={handleChange} />
+            </div>
+          </div>
+
+          <button
+            className={styles.checkoutBtn}
+            onClick={saveAddress}
+            disabled={loading}
+          >
+            {loading ? "Saving Address..." : (
+              <>
+                <span>Proceed to Payment</span>
+                <FiPlus />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

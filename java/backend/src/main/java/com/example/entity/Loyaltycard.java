@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "loyaltycard")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "user" })
 public class Loyaltycard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

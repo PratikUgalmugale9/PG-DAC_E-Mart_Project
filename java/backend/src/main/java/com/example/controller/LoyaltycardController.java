@@ -16,11 +16,23 @@ import com.example.entity.Loyaltycard;
 import com.example.service.LoyaltycardService;
 
 @RestController
-@RequestMapping("/loyaltycard")
+@RequestMapping("/api/loyaltycard")
 public class LoyaltycardController {
 
     @Autowired
     private LoyaltycardService loyaltycardService;
+
+    @Autowired
+    private com.example.repository.UserRepository userRepository;
+
+    // ===================== GET MY CARD =====================
+    @GetMapping("/my")
+    public Loyaltycard getMyCard(org.springframework.security.core.Authentication authentication) {
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .map(user -> loyaltycardService.getLoyaltycardByUserId(user.getId()))
+                .orElse(null); // Return null if user or card not found
+    }
 
     // ===================== CREATE =====================
     @PostMapping

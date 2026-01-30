@@ -26,14 +26,19 @@ public class AddressController {
     @PostMapping("/add")
     public Address addAddress(
             @RequestBody Address address,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
         String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         address.setUser(user);
+
+        // Sync to User entity for Invoice service to pick up
+        user.setAddress(address.getHouseNo() + ", " + address.getCity() + ", " + address.getState() + " - "
+                + address.getPincode());
+        userRepository.save(user);
+
         return addressRepository.save(address);
     }
 

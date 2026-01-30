@@ -1,41 +1,37 @@
 package com.example.service;
 
+import com.example.entity.Cart;
 import com.example.entity.User;
 import com.example.exception.GlobalExceptionHandler;
+import com.example.repository.CartRepository;
 import com.example.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 @Service
 class UserServiceImpl implements UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CartRepository cartRepository) {
         this.userRepository = userRepository;
+        this.cartRepository = cartRepository;
     }
 
     // ---------------- HELPER ----------------
 
     private void validateUniqueFields(User user) {
 
-        logger.debug("Validating unique fields for email: {}", user.getEmail());
-
         userRepository.findByEmail(user.getEmail())
                 .ifPresent(u -> {
-                    logger.warn("Duplicate email detected: {}", user.getEmail());
                     throw new GlobalExceptionHandler.DuplicateFieldException(
                             "Email already exists: " + user.getEmail());
                 });
@@ -43,7 +39,6 @@ class UserServiceImpl implements UserService {
         if (user.getMobile() != null) {
             userRepository.findByMobile(user.getMobile())
                     .ifPresent(u -> {
-                        logger.warn("Duplicate mobile detected: {}", user.getMobile());
                         throw new GlobalExceptionHandler.DuplicateFieldException(
                                 "Mobile number already exists: " + user.getMobile());
                     });
@@ -54,143 +49,127 @@ class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user) {
-
-        logger.info("Saving user with email: {}", user.getEmail());
-
         validateUniqueFields(user);
 
+        // 🔐 Encode password before storing (only if present)
         if (user.getPasswordHash() != null) {
-            logger.debug("Encoding password for user: {}", user.getEmail());
-            user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+            user.setPasswordHash(
+                    passwordEncoder.encode(user.getPasswordHash()));
         }
 
-        User savedUser = userRepository.save(user);
-        logger.info("User saved successfully with id: {}", savedUser.getId());
-
-        return savedUser;
+        return userRepository.save(user);
     }
 
     @Override
     public List<User> getAllUsers() {
-        logger.info("Fetching all users");
         return userRepository.findAll();
     }
 
     @Override
     public User getUserById(Integer id) {
-
-        logger.info("Fetching user with id: {}", id);
-
         return userRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.warn("User not found with id: {}", id);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
     public void deleteUser(Integer id) {
-
-        logger.info("Deleting user with id: {}", id);
-
         User user = userRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.warn("Delete failed. User not found with id: {}", id);
-                    return new RuntimeException("User not found");
-                });
-
+                .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
-        logger.info("User deleted successfully with id: {}", id);
     }
 
     @Override
     public User updateUser(Integer id, User updatedUser) {
 
-        logger.info("Updating user with id: {}", id);
-
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.warn("Update failed. User not found with id: {}", id);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Update allowed fields only
         existingUser.setFullName(updatedUser.getFullName());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setMobile(updatedUser.getMobile());
         existingUser.setAddress(updatedUser.getAddress());
 
-        User savedUser = userRepository.save(existingUser);
-        logger.info("User updated successfully with id: {}", savedUser.getId());
-
-        return savedUser;
+        return userRepository.save(existingUser);
     }
 
-    // ---------------- REGISTER ----------------
+    // ---------------- NORMAL REGISTER (LOCAL USER) ----------------
 
     @Override
     public User register(User user) {
 
-        logger.info("Registering user with email: {}", user.getEmail());
-
         if (userRepository.existsByEmail(user.getEmail())) {
-            logger.warn("Registration failed. Email already exists: {}", user.getEmail());
             throw new RuntimeException("Email already registered");
         }
 
+        // 🔥 VERY IMPORTANT — SET PROVIDER
         user.setProvider("LOCAL");
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+
+        // 🔐 HASH PASSWORD
+        user.setPasswordHash(
+                passwordEncoder.encode(user.getPasswordHash()));
 
         User savedUser = userRepository.save(user);
-        logger.info("User registered successfully with id: {}", savedUser.getId());
+
+        // ✅ PROACTIVE CART CREATION
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cart.setIsActive('Y');
+        cartRepository.save(cart);
 
         return savedUser;
     }
 
-    // ---------------- LOGIN ----------------
+    // ---------------- NORMAL LOGIN ----------------
 
     @Override
     public User login(String email, String password) {
 
-        logger.info("Login attempt for email: {}", email);
-
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    logger.warn("Login failed. User not found: {}", email);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // 🔴 If this is a GOOGLE user, block normal login
         if ("GOOGLE".equals(user.getProvider())) {
-            logger.warn("Blocked normal login for GOOGLE user: {}", email);
             throw new RuntimeException("Please login using Google");
         }
 
+        // 🔐 VERIFY PASSWORD
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            logger.warn("Invalid password for email: {}", email);
             throw new RuntimeException("Invalid credentials");
         }
 
-        logger.info("Login successful for user id: {}", user.getId());
-        return user;
+        return user; // JWT will be generated in controller
     }
 
-    // ---------------- GOOGLE LOGIN ----------------
+    // ---------------- GOOGLE LOGIN (SSO) ----------------
 
     @Override
     public User loginWithGoogle(String email, String fullName) {
 
-        logger.info("Google login attempt for email: {}", email);
-
+        // Check if user already exists
         return userRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    logger.info("First-time Google login. Creating new user: {}", email);
-
+                    // 🔥 First time Google user → create new account automatically
                     User newUser = new User();
                     newUser.setEmail(email);
                     newUser.setFullName(fullName);
                     newUser.setProvider("GOOGLE");
-                    newUser.setPasswordHash(null);
+                    newUser.setPasswordHash(null); // no password for Google users
 
-                    return userRepository.save(newUser);
+                    User saved = userRepository.save(newUser);
+
+                    // ✅ PROACTIVE CART CREATION
+                    Cart cart = new Cart();
+                    cart.setUser(saved);
+                    cart.setIsActive('Y');
+                    cartRepository.save(cart);
+
+                    return saved;
                 });
+    }
+
+    @Override
+    public java.util.Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

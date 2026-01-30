@@ -1,0 +1,253 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@400;600;700&family=Space+Mono&display=swap');
+
+.profileWrapper {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 50%, #1a1c2c 0%, #0a0a0a 100%);
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+}
+
+.profileCard {
+    width: 100%;
+    max-width: 550px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 60px 40px;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.6);
+    animation: slideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.avatarContainer {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 4px solid #7c3aed;
+    padding: 5px;
+    object-fit: cover;
+    box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
+}
+
+.userName {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+}
+
+/* 3D LOYALTY CARD REDESIGN */
+.loyaltySection {
+    width: 100%;
+    perspective: 2000px;
+    margin-bottom: 45px;
+}
+
+.cardContainer {
+    width: 100%;
+    aspect-ratio: 1.6 / 1;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+    cursor: pointer;
+}
+
+.loyaltyCard {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: #000;
+    border-radius: 25px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backface-visibility: hidden;
+}
+
+/* Gold Wave Gradient */
+.goldWave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%;
+    background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+    clip-path: ellipse(100% 100% at 50% 100%);
+}
+
+.cardContent {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    width: 100%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardTitle {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.5rem;
+    background: linear-gradient(to bottom, #fcf6ba, #bf953f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.cardWebsite {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: #000;
+    font-weight: 600;
+    position: absolute;
+    bottom: 70px;
+    text-transform: uppercase;
+}
+
+/* Points Tracking Circles */
+.pointsContainer {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+}
+
+.pointCircle {
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pointActive {
+    width: 12px;
+    height: 12px;
+    background: #bf953f;
+    border-radius: 50%;
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.cardGlow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* User Info overlaying gold */
+.cardFooter {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    text-align: right;
+    color: #fcf6ba;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.cardNumber {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    color: #fcf6ba;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.logoutBtn {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-size: 0.95rem;
+}
+
+.logoutBtn:hover {
+    background: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    border-color: rgba(255, 68, 68, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 0, 0, 0.1);
+}
+
+.loadingPulse {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.5;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.95);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 0.3;
+        transform: scale(0.95);
+    }
+}

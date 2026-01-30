@@ -1,0 +1,216 @@
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    min-height: 80vh;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* LEFT - IMAGE SECTION */
+.imageSection {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 40px;
+    height: 500px;
+}
+
+.productImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.productImage:hover {
+    transform: scale(1.05);
+}
+
+/* RIGHT - DETAILS SECTION */
+.detailsSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.description {
+    font-size: 1rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* PRICING */
+.pricingCard {
+    background: #f8fafc;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.priceRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.mrpLabel {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.mrpPrice {
+    color: #94a3b8;
+    text-decoration: line-through;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.cardholderRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.cardholderLabel {
+    color: #bfa15f;
+    /* Gold-ish */
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardholderPrice {
+    color: #1a1a1a;
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.pointsInfo {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #10b981;
+    /* Green */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: fit-content;
+}
+
+/* ACTION BUTTONS */
+.actionButtons {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.addToCartBtn {
+    flex: 1;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.addToCartBtn:hover {
+    background: #333;
+    transform: translateY(-2px);
+}
+
+.addedBtn {
+    background: #10b981;
+    /* Success Green */
+    cursor: default;
+}
+
+.addedBtn:hover {
+    background: #059669;
+    transform: none;
+}
+
+.goBackBtn {
+    padding: 18px 30px;
+    background: white;
+    color: #1a1a1a;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.goBackBtn:hover {
+    border-color: #1a1a1a;
+}
+
+/* LOADING STATE */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    font-size: 1.2rem;
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .imageSection {
+        height: 300px;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+}

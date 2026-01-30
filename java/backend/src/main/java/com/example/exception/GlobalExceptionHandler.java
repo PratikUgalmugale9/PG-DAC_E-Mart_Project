@@ -20,14 +20,12 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegal(IllegalArgumentException ex) {
         return ResponseEntity
                 .badRequest()
                 .body(ex.getMessage());
     }
-
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDBConstraint(DataIntegrityViolationException ex) {
@@ -42,18 +40,16 @@ public class GlobalExceptionHandler {
 
         Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
         return ResponseEntity.badRequest().body(errors);
     }
 
     public static class DuplicateFieldException extends RuntimeException {
-        
+
         public DuplicateFieldException(String message) {
             super(message);
         }
     }
 }
-

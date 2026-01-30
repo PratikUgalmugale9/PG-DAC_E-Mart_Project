@@ -31,11 +31,20 @@ const CartPage = () => {
                 const user = JSON.parse(userJson);
                 const userId = user.id || user.userId;
 
-                if (!userId) return;
+                const token = localStorage.getItem("token");
 
-                const response = await axios.get(`http://localhost:8080/loyaltycard/user/${userId}`);
+                if (!userId || !token) return;
 
-                if (response.data && response.data.isActive === 'y') {
+                // Update URL to match backend controller: /api/loyaltycard/user/{userId}
+                // Must include Authorization header
+                const response = await axios.get(`http://localhost:8080/api/loyaltycard/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                // Check for generic 'y' or 'Y'
+                if (response.data && String(response.data.isActive).toLowerCase() === 'y') {
                     setLoyaltyCard(response.data);
                     setHasLoyaltyCard(true);
                     console.log("✅ Loyalty Card Active:", response.data);
@@ -290,31 +299,13 @@ const CartPage = () => {
                             </div>
                         </div>
 
-                        <button
-                            className={styles.checkoutBtn}
-                            onClick={() => {
-                                // ✅ Store total amount for payment page
-                                localStorage.setItem("payableAmount", summary.total);
-
-                                // 👉 Go to address page
-                                navigate("/checkout/address");
-                            }}
-                        >
+                        <button className={styles.checkoutBtn} onClick={() => navigate("/checkout/address")}>
                             <span>PROCEED TO CHECKOUT</span>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                         </button>
-
                     </div>
                 </div>
             </div>

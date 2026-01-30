@@ -3,6 +3,7 @@ package com.example.dto;
 public class LoginResponseDTO {
 
     private Integer userId;
+    private Integer cartId; // Added for session consistency
     private String fullName;
     private String email;
 
@@ -25,6 +26,14 @@ public class LoginResponseDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String getFullName() {

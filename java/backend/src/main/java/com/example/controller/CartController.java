@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
@@ -53,8 +52,7 @@ public class CartController {
     @PutMapping("/update")
     public Cart updateMyCart(
             Authentication authentication,
-            @RequestBody Cart updatedCart
-    ) {
+            @RequestBody Cart updatedCart) {
 
         String email = authentication.getName();
 
@@ -79,4 +77,3 @@ public class CartController {
         return "Cart deleted successfully";
     }
 }
-

@@ -6,7 +6,6 @@
     z-index: 1000;
     transition: var(--transition-smooth);
     padding: 0.75rem 5%;
-    /* More compact */
     background: var(--bg-white);
 }
 
@@ -16,7 +15,6 @@
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--shadow-glass);
     padding: 0.5rem 5%;
-    /* Even more compact when scrolled */
     border-bottom: 1px solid var(--glass-border);
 }
 
@@ -45,6 +43,10 @@
 .logo:hover {
     transform: scale(1.02);
 }
+
+/* ===============================
+   SEARCH
+=============================== */
 
 .searchContainer {
     flex: 1;
@@ -82,11 +84,47 @@
     color: var(--text-main);
 }
 
+/* ===============================
+   NAV LINKS
+=============================== */
+
 .navLinks {
     display: flex;
     align-items: center;
     gap: 2.5rem;
 }
+
+/* ===============================
+   LANGUAGE SWITCHER ✅ FIXED
+=============================== */
+
+.langSwitcher {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.langSwitcher button {
+    background: var(--bg-light);
+    border: 1px solid var(--glass-border);
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.langSwitcher button:hover {
+    background: var(--primary);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* ===============================
+   NAV ITEM
+=============================== */
 
 .navItem {
     background: none;
@@ -146,6 +184,10 @@
     border: 2px solid var(--bg-white);
 }
 
+/* ===============================
+   LOGIN BUTTON
+=============================== */
+
 .loginBtn {
     background: var(--primary);
     color: white;
@@ -162,6 +204,10 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 120, 212, 0.35);
 }
+
+/* ===============================
+   PROFILE DROPDOWN
+=============================== */
 
 .profileContainer {
     position: relative;
@@ -249,24 +295,9 @@
     color: #cf1322;
 }
 
-.langSwitcher {
-    display: flex;
-    gap: 8px;
-}
-
-.langSwitcher button {
-    border: none;
-    background: var(--bg-light);
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.langSwitcher button:hover {
-    background: var(--primary);
-    color: white;
-}
+/* ===============================
+   MOBILE
+=============================== */
 
 .hamburger {
     display: none;

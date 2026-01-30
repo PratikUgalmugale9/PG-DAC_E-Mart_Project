@@ -21,8 +21,6 @@ public class CatalogController {
         this.service = service;
     }
 
-
-
     @GetMapping("/categories")
     public List<Catmaster> mainCategories() {
         return service.getMainCategories();

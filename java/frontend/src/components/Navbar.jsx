@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "../styles/Navbar.module.css";
 import { useCart } from "../context/CartContext";
 import { useNavigate, useLocation } from "react-router-dom";
-
 import {
   FiSearch,
   FiShoppingCart,
@@ -12,8 +11,7 @@ import {
   FiX,
   FiChevronDown,
 } from "react-icons/fi";
-
-import { useTranslation } from "react-i18next"; // ✅ i18n import
+import { useTranslation } from "react-i18next";
 
 const Navbar = ({ onCartClick, onLogoClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,10 +24,10 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
   const location = useLocation();
   const { cartItems } = useCart();
 
-  // ✅ i18n hook
+  // 🌍 i18n
   const { t, i18n } = useTranslation();
 
-  // Check login status
+  // 🔐 Check login status (JWT-based)
   useEffect(() => {
     const checkLogin = () => {
       const token = localStorage.getItem("token");
@@ -38,11 +36,10 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
 
     checkLogin();
     window.addEventListener("storage", checkLogin);
-
     return () => window.removeEventListener("storage", checkLogin);
   }, [location]);
 
-  // Handle scroll effect
+  // 🧊 Scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -51,7 +48,7 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdown on outside click
+  // ❌ Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -79,7 +76,7 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
   return (
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.navContainer}>
-        
+
         {/* Logo */}
         <div className={styles.logo} onClick={onLogoClick}>
           e<span>Mart</span>
@@ -90,12 +87,12 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
           <FiSearch className={styles.searchIcon} />
           <input
             type="text"
-            placeholder={t("searchPlaceholder")} // ✅ translated
+            placeholder={t("searchPlaceholder")}
             className={styles.searchInput}
           />
         </div>
 
-        {/* Language Switch */}
+        {/* 🌍 Language Switch */}
         <div className={styles.langSwitcher}>
           <button onClick={() => i18n.changeLanguage("en")}>EN</button>
           <button onClick={() => i18n.changeLanguage("hi")}>HI</button>
@@ -111,21 +108,18 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
 
         {/* Nav Links */}
         <div
-          className={`${styles.navLinks} ${
-            isMobileMenuOpen ? styles.active : ""
-          }`}
+          className={`${styles.navLinks} ${isMobileMenuOpen ? styles.active : ""
+            }`}
         >
-          {/* Cart Button */}
+          {/* 🛒 Cart */}
           <button
             className={styles.navItem}
             onClick={() => {
               const token = localStorage.getItem("token");
 
               if (!token) {
-                alert(t("cartLoginAlert")); // ✅ translated alert
-                navigate("/login", {
-                  state: { from: "/cart" },
-                });
+                alert(t("cartLoginAlert"));
+                navigate("/login", { state: { from: "/cart" } });
                 return;
               }
 
@@ -141,7 +135,7 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
             <span className={styles.navText}>{t("cart")}</span>
           </button>
 
-          {/* Profile/Login */}
+          {/* 👤 Profile / Login */}
           {isLoggedIn ? (
             <div className={styles.profileContainer} ref={dropdownRef}>
               <button
@@ -151,16 +145,14 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
                 <FiUser />
                 <span className={styles.navText}>{t("profile")}</span>
                 <FiChevronDown
-                  className={`${styles.chevron} ${
-                    showDropdown ? styles.open : ""
-                  }`}
+                  className={`${styles.chevron} ${showDropdown ? styles.open : ""
+                    }`}
                 />
               </button>
 
               <div
-                className={`${styles.dropdownMenu} ${
-                  showDropdown ? styles.show : ""
-                }`}
+                className={`${styles.dropdownMenu} ${showDropdown ? styles.show : ""
+                  }`}
               >
                 <button
                   className={styles.dropdownItem}
