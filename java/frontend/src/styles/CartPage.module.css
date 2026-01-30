@@ -612,6 +612,124 @@
 }
 
 /* ===================================
+   REDEMPTION SECTION
+   =================================== */
+.redemptionSection {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.redemptionTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #bf953f;
+    margin-bottom: 1rem;
+}
+
+.redemptionBalance {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 1.25rem;
+}
+
+.choiceGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.choiceBtn {
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.choiceBtnPrimary {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+    color: #667eea;
+    border-width: 2px;
+}
+
+.choiceBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pointsInputWrapper {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.pointsLabel {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.inputGroup {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pointsInput {
+    flex: 1;
+    padding: 0.625rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e0;
+    font-size: 0.9375rem;
+    outline: none;
+}
+
+.pointsInput:focus {
+    border-color: #667eea;
+}
+
+.maxBtn {
+    padding: 0 1rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    cursor: pointer;
+}
+
+.pointsRedeemedRow {
+    color: #bf953f !important;
+    font-weight: 700 !important;
+}
+
+.pointsRedeemedRow span:last-child {
+    color: #bf953f !important;
+}
+
+.amountToPayRow {
+    border-top: 1px dashed #cbd5e0;
+    margin-top: 0.5rem;
+    padding-top: 1rem !important;
+}
+
+/* ===================================
    RESPONSIVE DESIGN
    =================================== */
 @media (max-width: 1024px) {

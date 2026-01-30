@@ -93,6 +93,30 @@ const ProfilePage = () => {
         window.location.reload();
     };
 
+    const handleBuyCard = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem("token");
+            const userId = user.id || user.userId;
+
+            const response = await axios.post("http://localhost:8080/api/loyaltycard", {
+                user: { id: userId }
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data) {
+                setCard(response.data);
+                alert("Loyalty Card Purchased Successfully! 1000 points added.");
+            }
+        } catch (error) {
+            console.error("Failed to buy card", error);
+            alert("Failed to purchase loyalty card: " + (error.response?.data?.message || error.message));
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className={styles.profileWrapper}>
@@ -157,9 +181,24 @@ const ProfilePage = () => {
                         </p>
                     </div>
                 ) : (
-                    <p style={{ color: '#64748b', marginBottom: '30px', fontSize: '0.9rem' }}>
-                        No loyalty card linked to this account.
-                    </p>
+                    <div style={{ textAlign: 'center' }}>
+                        <p style={{ color: '#64748b', marginBottom: '20px', fontSize: '0.9rem' }}>
+                            No loyalty card linked to this account.
+                        </p>
+                        <button
+                            className={styles.buyCardBtn || styles.logoutBtn}
+                            onClick={handleBuyCard}
+                            style={{
+                                marginBottom: '30px',
+                                background: 'linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c)',
+                                color: '#1a1a1a',
+                                fontWeight: '700',
+                                border: 'none'
+                            }}
+                        >
+                            Buy Loyalty Card
+                        </button>
+                    </div>
                 )}
 
                 <button className={styles.logoutBtn} onClick={handleLogout}>
