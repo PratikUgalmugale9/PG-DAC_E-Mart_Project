@@ -43,7 +43,16 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // ✅ Step 2: Fetch all cart items by cartId
+        // ✅ Step 2: Fetch all cart items
+        // Robustness: If cartId is null, try to get it from user
+        if (cartId == null && user.getCart() != null) {
+            cartId = user.getCart().getId();
+        }
+
+        if (cartId == null) {
+            throw new RuntimeException("Cart ID is missing and could not be resolved.");
+        }
+
         List<Cartitem> cartItems = cartItemRepository.findByCart_Id(cartId);
 
         if (cartItems.isEmpty()) {
@@ -54,8 +63,13 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (Cartitem item : cartItems) {
-            BigDecimal itemTotal = item.getPriceSnapshot()
-                    .multiply(BigDecimal.valueOf(item.getQuantity()));
+            // Defensive: if snapshot is null, fallback to current product price
+            BigDecimal price = item.getPriceSnapshot();
+            if (price == null) {
+                price = item.getProd().getCardholderPrice();
+            }
+
+            BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
             totalAmount = totalAmount.add(itemTotal);
         }
 
@@ -65,34 +79,34 @@ public class OrderServiceImpl implements OrderService {
         ordermaster.setPaymentMode(paymentMode);
         ordermaster.setOrderStatus("Pending");
         ordermaster.setTotalAmount(totalAmount);
+        ordermaster.setItems(new ArrayList<>()); // Initialize the items list
 
-        // ✅ Step 5: Save OrderMaster (generates order_id)
+        // ✅ Step 5: Save OrderMaster
         Ordermaster savedOrder = orderRepository.save(ordermaster);
 
         // ✅ Step 6: Create OrderItem list from cart items
-        List<OrderItem> orderItems = new ArrayList<>();
-
         for (Cartitem cartItem : cartItems) {
-
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
-            orderItem.setProduct(cartItem.getProd()); // ✅ your cartitem uses getProd()
+            orderItem.setProduct(cartItem.getProd());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getPriceSnapshot());
 
-            orderItems.add(orderItem);
+            BigDecimal itemPrice = cartItem.getPriceSnapshot();
+            if (itemPrice == null) {
+                itemPrice = cartItem.getProd().getCardholderPrice();
+            }
+            orderItem.setPrice(itemPrice);
+
+            // Maintain relationship in memory
+            savedOrder.getItems().add(orderItem);
         }
 
         // ✅ Step 7: Save all OrderItems
-        orderItemRepository.saveAll(orderItems);
+        orderItemRepository.saveAll(savedOrder.getItems());
 
         // ✅ Step 8: Clear cart after order is placed
         cartItemRepository.deleteAll(cartItems);
 
-        // ✅ Optional: attach items in response
-        // savedOrder.setItems(orderItems);
-
-        // ✅ Return saved order
         return savedOrder;
     }
 

@@ -2,7 +2,7 @@ package com.example.service;
 
 import com.example.entity.User;
 import java.util.List;
-import com.example.dto.RegisterRequest;
+import java.util.Optional;
 
 public interface UserService {
     User saveUser(User user);
@@ -20,4 +20,6 @@ public interface UserService {
     User login(String email, String password);
 
     User loginWithGoogle(String email, String fullName);
+
+    Optional<User> findByEmail(String email);
 }

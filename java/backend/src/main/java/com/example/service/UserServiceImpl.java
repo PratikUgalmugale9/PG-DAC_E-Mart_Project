@@ -1,8 +1,9 @@
 package com.example.service;
 
-import com.example.dto.RegisterRequest;
+import com.example.entity.Cart;
 import com.example.entity.User;
 import com.example.exception.GlobalExceptionHandler;
+import com.example.repository.CartRepository;
 import com.example.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,14 @@ import java.util.List;
 class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CartRepository cartRepository) {
         this.userRepository = userRepository;
+        this.cartRepository = cartRepository;
     }
 
     // ---------------- HELPER ----------------
@@ -108,6 +111,12 @@ class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
 
+        // ✅ PROACTIVE CART CREATION
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cart.setIsActive('Y');
+        cartRepository.save(cart);
+
         return savedUser;
     }
 
@@ -147,7 +156,20 @@ class UserServiceImpl implements UserService {
                     newUser.setProvider("GOOGLE");
                     newUser.setPasswordHash(null); // no password for Google users
 
-                    return userRepository.save(newUser);
+                    User saved = userRepository.save(newUser);
+
+                    // ✅ PROACTIVE CART CREATION
+                    Cart cart = new Cart();
+                    cart.setUser(saved);
+                    cart.setIsActive('Y');
+                    cartRepository.save(cart);
+
+                    return saved;
                 });
+    }
+
+    @Override
+    public java.util.Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

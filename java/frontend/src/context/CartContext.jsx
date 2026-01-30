@@ -5,6 +5,7 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
+    const [cartId, setCartId] = useState(null);
     const [loading, setLoading] = useState(false);
 
     // Helper for API header
@@ -18,6 +19,7 @@ export const CartProvider = ({ children }) => {
         const token = localStorage.getItem("token");
         if (!token) {
             setCartItems([]);
+            setCartId(null);
             return;
         }
 
@@ -27,12 +29,29 @@ export const CartProvider = ({ children }) => {
                 headers: getAuthHeader()
             });
 
+            // Extract cartId from the first item if exists
+            if (res.data && res.data.length > 0) {
+                setCartId(res.data[0].cartId);
+            } else {
+                // If cart is empty, we might still want to fetch the cart ID 
+                // but for now, we'll rely on the proactive creation ensuring 
+                // that at least one fetch happens successfully or use a dedicated endpoint
+                try {
+                    const cartRes = await axios.get("http://localhost:8080/api/cart/my", {
+                        headers: getAuthHeader()
+                    });
+                    setCartId(cartRes.data.id);
+                } catch (e) {
+                    console.warn("Could not fetch empty cart ID:", e);
+                }
+            }
+
             // Map backend DTO to frontend format
             const mapped = res.data.map(item => ({
                 id: item.productId,
-                cartItemId: item.cartItemId, // 🛠️ Critical for update/delete
+                cartItemId: item.cartItemId,
                 name: item.productName,
-                price: item.cardholderPrice, // Use cardholder price as primary
+                price: item.cardholderPrice,
                 mrpPrice: item.mrpPrice,
                 cardholderPrice: item.cardholderPrice,
                 pointsToBeRedeem: item.pointsToBeRedeem,
@@ -111,6 +130,7 @@ export const CartProvider = ({ children }) => {
     return (
         <CartContext.Provider value={{
             cartItems,
+            cartId,
             loading,
             addToCart,
             updateQuantity,

@@ -10,36 +10,43 @@ import { useCart } from '../context/CartContext';
 const HomePage = () => {
 
     const navigate = useNavigate();
-    const { addToCart, cartItems } = useCart();
+    const { addToCart, removeFromCart, cartItems } = useCart();
 
     const [categories, setCategories] = useState([]);
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Check if product is in cart
     const isInCart = (productId) => {
         return cartItems.some(item => item.id === productId);
     };
 
-    // Fetch categories on page load
+    // Fetch data on page load
     useEffect(() => {
-        axios
-            .get('http://localhost:8080/api/catalog/categories')
-            .then(response => {
-                setCategories(response.data);
+        setLoading(true);
+
+        // Fetch Categories
+        const fetchCategories = axios.get('http://localhost:8080/api/catalog/categories');
+
+        // Fetch All Products (for featured section)
+        const fetchProducts = axios.get('http://localhost:8080/api/products');
+
+        Promise.all([fetchCategories, fetchProducts])
+            .then(([resCat, resProd]) => {
+                setCategories(resCat.data);
+
+                // Randomly select 6-8 products for "Featured" section
+                const allProds = resProd.data;
+                const shuffled = [...allProds].sort(() => 0.5 - Math.random());
+                setFeaturedProducts(shuffled.slice(0, 8));
+
+                setLoading(false);
             })
             .catch(error => {
-                console.error('Error fetching categories:', error);
+                console.error('Error fetching homepage data:', error);
+                setLoading(false);
             });
     }, []);
-
-    // Featured products
-    const products = [
-        { id: 101, name: 'Wireless Headphones', price: 99.99, mrpPrice: 110.00, cardholderPrice: 99.99, pointsToBeRedeem: 1000, img: '/images/wireless_headphones.png' },
-        { id: 102, name: 'Smart Watch', price: 149.99, mrpPrice: 165.00, cardholderPrice: 149.99, pointsToBeRedeem: 1500, img: '/images/smart_watch.png' },
-        { id: 103, name: 'Running Shoes', price: 79.99, mrpPrice: 90.00, cardholderPrice: 79.99, pointsToBeRedeem: 800, img: '/images/running_shoes.png' },
-        { id: 104, name: 'Laptop Backpack', price: 45.00, mrpPrice: 50.00, cardholderPrice: 45.00, pointsToBeRedeem: 450, img: '/images/laptop_backpack.png' },
-        { id: 105, name: 'Gaming Mouse', price: 59.99, mrpPrice: 65.00, cardholderPrice: 59.99, pointsToBeRedeem: 600, img: '/images/gaming_mouse.png' },
-        { id: 106, name: 'Bluetooth Speaker', price: 39.99, mrpPrice: 45.00, cardholderPrice: 39.99, pointsToBeRedeem: 400, img: '/images/bluetooth_speaker.png' }
-    ];
 
     return (
         <div className={styles.pageWrapper}>
@@ -120,7 +127,7 @@ const HomePage = () => {
                             </svg>
                             <h2 className={styles.sectionTitle}>Featured Products</h2>
                         </div>
-                        <button className={styles.viewAllBtn}>
+                        <button className={styles.viewAllBtn} onClick={() => navigate('/browse/C101')}>
                             <span>View All</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -129,69 +136,76 @@ const HomePage = () => {
                     </div>
 
                     <div className={styles.productGrid}>
-                        {products.map(prod => (
-                            <div key={prod.id} className={styles.productCard}>
-                                {/* Wishlist Badge */}
-                                <button className={styles.wishlistBtn}>
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                </button>
-
-                                <div className={styles.prodImageContainer}>
-                                    <img
-                                        src={prod.img}
-                                        alt={prod.name}
-                                        className={styles.prodImage}
-                                    />
-                                </div>
-                                <div className={styles.prodInfo}>
-                                    <h3 className={styles.prodName}>{prod.name}</h3>
-                                    <div className={styles.prodPriceRow}>
-                                        <div className={styles.prodPrice}>₹{prod.price}</div>
-                                        {/* Rating */}
-                                        <div className={styles.rating}>
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" strokeWidth="2">
-                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                            </svg>
-                                            <span>4.5</span>
-                                        </div>
-                                    </div>
-                                    <button
-                                        className={styles.addToCartBtn}
-                                        onClick={() => addToCart({
-                                            id: prod.id,
-                                            name: prod.name,
-                                            price: prod.price,
-                                            mrpPrice: prod.mrpPrice,
-                                            cardholderPrice: prod.cardholderPrice,
-                                            pointsToBeRedeem: prod.pointsToBeRedeem,
-                                            image: prod.img,
-                                            quantity: 1
-                                        })}
-                                        disabled={isInCart(prod.id)}
-                                    >
-                                        {isInCart(prod.id) ? (
-                                            <>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                                </svg>
-                                                <span>Added to Cart</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                    <circle cx="9" cy="21" r="1"></circle>
-                                                    <circle cx="20" cy="21" r="1"></circle>
-                                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                                </svg>
-                                                <span>Add to Cart</span>
-                                            </>
-                                        )}
+                        {loading ? (
+                            <p>Loading featured products...</p>
+                        ) : (
+                            featuredProducts.map(prod => (
+                                <div key={prod.id} className={styles.productCard}>
+                                    <button className={styles.wishlistBtn}>
+                                        <svg className={styles.wishlistIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                        </svg>
                                     </button>
+
+                                    <div
+                                        className={styles.prodImageContainer}
+                                        onClick={() => navigate(`/product/${prod.id}`)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <img
+                                            src={`/${prod.prodImagePath}`}
+                                            alt={prod.prodName}
+                                            className={styles.prodImage}
+                                            onError={(e) => e.target.src = '/images/default.jpg'}
+                                        />
+                                    </div>
+                                    <div className={styles.prodInfo}>
+                                        <h3
+                                            className={styles.prodName}
+                                            onClick={() => navigate(`/product/${prod.id}`)}
+                                            style={{ cursor: 'pointer' }}
+                                        >{prod.prodName}</h3>
+                                        <div className={styles.prodPriceRow}>
+                                            <div className={styles.prodPrice}>₹{prod.cardholderPrice}</div>
+                                            {/* Rating Placeholder */}
+                                            <div className={styles.rating}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" strokeWidth="2">
+                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                                </svg>
+                                                <span>4.8</span>
+                                            </div>
+                                        </div>
+
+                                        {/* 🔥 ADD TO CART */}
+                                        <button
+                                            className={styles.addToCartBtn}
+                                            onClick={() => {
+                                                if (isInCart(prod.id)) {
+                                                    removeFromCart(prod.id);
+                                                } else {
+                                                    addToCart({
+                                                        id: prod.id,
+                                                        name: prod.prodName,
+                                                        price: prod.cardholderPrice,
+                                                        mrpPrice: prod.mrpPrice,
+                                                        cardholderPrice: prod.cardholderPrice,
+                                                        pointsToBeRedeem: prod.pointsToBeRedeem,
+                                                        image: `/${prod.prodImagePath}`,
+                                                        quantity: 1
+                                                    });
+                                                }
+                                            }}
+                                            style={{
+                                                background: isInCart(prod.id) ? '#22c55e' : '',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            {isInCart(prod.id) ? 'Added' : 'Add to Cart'}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </section>
 

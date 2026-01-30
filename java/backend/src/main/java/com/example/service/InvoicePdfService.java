@@ -62,16 +62,20 @@ public class InvoicePdfService {
             header.setWidths(new float[] { 25, 75 });
 
             PdfPCell logoCell = new PdfPCell(new Phrase("e-MART", logoFont));
-            logoCell.setFixedHeight(60);
+            logoCell.setFixedHeight(70);
+            logoCell.setBorder(Rectangle.NO_BORDER);
             logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            logoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 
-            PdfPCell bannerCell = new PdfPCell(new Phrase(
-                    "BANNER AREA\n(Will have Images, Company name and Monogram)",
-                    normalFont));
-            bannerCell.setFixedHeight(60);
-            bannerCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            bannerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell bannerCell = new PdfPCell();
+            bannerCell.setFixedHeight(70);
+            bannerCell.setBorder(Rectangle.NO_BORDER);
+            Paragraph p1 = new Paragraph("PREMIUM ONLINE SHOPPING", smallFont);
+            p1.setAlignment(Element.ALIGN_RIGHT);
+            Paragraph p2 = new Paragraph("Official Invoice", boldFont);
+            p2.setAlignment(Element.ALIGN_RIGHT);
+            bannerCell.addElement(p1);
+            bannerCell.addElement(p2);
 
             header.addCell(logoCell);
             header.addCell(bannerCell);
@@ -315,7 +319,8 @@ public class InvoicePdfService {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         return cell;
     }
- // Added by Hamzah - wrapper method for payment email invoice
+
+    // Added by Hamzah - wrapper method for payment email invoice
     public byte[] generateInvoiceAsBytes(Ordermaster order, List<OrderItem> items) {
 
         if (order == null) {
@@ -328,6 +333,5 @@ public class InvoicePdfService {
 
         return generateInvoicePdf(order, items);
     }
-
 
 }

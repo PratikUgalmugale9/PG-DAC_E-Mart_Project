@@ -11,13 +11,22 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    // GET CURRENT USER
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(org.springframework.security.core.Authentication authentication) {
+        String email = authentication.getName();
+        return userService.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // CREATE
@@ -38,7 +47,6 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
@@ -50,7 +58,6 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-
 
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Integer id, @RequestBody User updatedUser) {
