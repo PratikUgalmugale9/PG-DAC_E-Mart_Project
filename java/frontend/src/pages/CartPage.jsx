@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const { cartItems, updateQuantity, removeFromCart } = useCart();
     const [summary, setSummary] = useState({
         mrpTotal: 0,
@@ -31,11 +31,20 @@ const CartPage = () => {
                 const user = JSON.parse(userJson);
                 const userId = user.id || user.userId;
 
-                if (!userId) return;
+                const token = localStorage.getItem("token");
 
-                const response = await axios.get(`http://localhost:8080/loyaltycard/user/${userId}`);
+                if (!userId || !token) return;
 
-                if (response.data && response.data.isActive === 'y') {
+                // Update URL to match backend controller: /api/loyaltycard/user/{userId}
+                // Must include Authorization header
+                const response = await axios.get(`http://localhost:8080/api/loyaltycard/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                // Check for generic 'y' or 'Y'
+                if (response.data && String(response.data.isActive).toLowerCase() === 'y') {
                     setLoyaltyCard(response.data);
                     setHasLoyaltyCard(true);
                     console.log("✅ Loyalty Card Active:", response.data);

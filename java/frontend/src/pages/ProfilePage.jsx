@@ -32,10 +32,14 @@ const ProfilePage = () => {
 
                 if (userId) {
                     try {
-                        const response = await axios.get(`http://localhost:8080/loyaltycard/user/${userId}`);
+                        const response = await axios.get(`http://localhost:8080/api/loyaltycard/user/${userId}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
 
                         // Check for active status like CartPage does
-                        if (response.data && response.data.isActive === 'y') {
+                        if (response.data && String(response.data.isActive).toLowerCase() === 'y') {
                             setCard(response.data);
                         }
                     } catch (cardError) {
