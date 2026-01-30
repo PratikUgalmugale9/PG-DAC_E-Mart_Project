@@ -249,6 +249,25 @@
     color: #cf1322;
 }
 
+.langSwitcher {
+    display: flex;
+    gap: 8px;
+}
+
+.langSwitcher button {
+    border: none;
+    background: var(--bg-light);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.langSwitcher button:hover {
+    background: var(--primary);
+    color: white;
+}
+
 .hamburger {
     display: none;
     font-size: 1.5rem;
