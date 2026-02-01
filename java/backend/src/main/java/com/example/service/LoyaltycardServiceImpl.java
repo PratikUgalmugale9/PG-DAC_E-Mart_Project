@@ -24,17 +24,31 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
     @Override
     public Loyaltycard createLoyaltycard(Loyaltycard loyaltycard) {
 
+        if (loyaltycard.getUser() == null || loyaltycard.getUser().getId() == null) {
+            throw new RuntimeException("User information is missing in loyalty card request");
+        }
+
         Integer userId = loyaltycard.getUser().getId();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found with id " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+
+        // Check if user already has a card
+        Loyaltycard existingCard = loyaltycardRepository.findByUser_Id(userId);
+        if (existingCard != null) {
+            throw new RuntimeException("User already has a loyalty card");
+        }
 
         loyaltycard.setUser(user);
 
-        if (loyaltycard.getPointsBalance() == null) {
-            loyaltycard.setPointsBalance(0);
-        }
+        // Required logic for "Buy Loyalty Card" requirement
+        loyaltycard.setPointsBalance(1000); // 1000 initial loyalty points
+        loyaltycard.setIsActive('Y'); // Activated immediately
+        loyaltycard.setIssuedDate(java.time.LocalDate.now());
+
+        // Generate a random 16-digit card number
+        String cardNumber = "LC" + (long) (Math.random() * 1_000_000_000_000_000L);
+        loyaltycard.setCardNumber(cardNumber);
 
         return loyaltycardRepository.save(loyaltycard);
     }
@@ -82,7 +96,7 @@ public class LoyaltycardServiceImpl implements LoyaltycardService {
         }
 
         if (card.getIsActive() == null ||
-            !card.getIsActive().toString().equalsIgnoreCase("y")) {
+                !card.getIsActive().toString().equalsIgnoreCase("y")) {
             throw new RuntimeException("Loyalty card inactive");
         }
 
