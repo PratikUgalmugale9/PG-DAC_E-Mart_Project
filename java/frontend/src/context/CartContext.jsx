@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const CartContext = createContext();
 
@@ -7,7 +8,7 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [cartId, setCartId] = useState(null);
     const [loading, setLoading] = useState(false);
-
+const navigate=useNavigate();
     // ===============================
     // AUTH HEADER
     // ===============================
@@ -86,6 +87,7 @@ export const CartProvider = ({ children }) => {
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Please login to add items to cart");
+            navigate("/login");
             return;
         }
 

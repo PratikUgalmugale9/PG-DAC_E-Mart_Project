@@ -6,7 +6,7 @@ const Footer = () => {
     return (
         <footer className={styles.footer}>
             <div className={styles.footerContainer}>
-                <div className={styles.newsletter}>
+                {/* <div className={styles.newsletter}>
                     <div className={styles.newsletterText}>
                         <h3>Join our newsletter</h3>
                         <p>Subscribe to get special offers and once-in-a-lifetime deals.</p>
@@ -15,7 +15,7 @@ const Footer = () => {
                         <input type="email" placeholder="Enter your email" />
                         <button><FiSend /></button>
                     </div>
-                </div>
+                </div> */}
 
                 <div className={styles.footerMain}>
                     <div className={styles.brandInfo}>
@@ -34,10 +34,10 @@ const Footer = () => {
                     <div className={styles.linksGrid}>
                         <div className={styles.linkColumn}>
                             <h4>Shop</h4>
-                            <a href="#">Electronics</a>
-                            <a href="#">Fashion</a>
-                            <a href="#">Home & Living</a>
-                            <a href="#">Accessories</a>
+                            <a href="/browse/C001">Electronics</a>
+                            <a href="/browse/C002">Fashion</a>
+                            <a href="/browse/C003">Home & Appliances</a>
+                            <a href="/browse/C005">Sports</a>
                         </div>
                         <div className={styles.linkColumn}>
                             <h4>Support</h4>

@@ -73,13 +73,20 @@ const Payment = () => {
     // Points logic
     const maxPointsPossible = Math.min(loyaltyCard?.pointsBalance || 0, total);
 
+    // useEffect(() => {
+    //     if (paymentChoice === "POINTS") {
+    //         setPointsToUse(maxPointsPossible);
+    //     } else if (paymentChoice === "CASH") {
+    //         setPointsToUse(0);
+    //     }
+    // }, [paymentChoice, maxPointsPossible]);
+
     useEffect(() => {
-        if (paymentChoice === "POINTS") {
-            setPointsToUse(maxPointsPossible);
-        } else if (paymentChoice === "CASH") {
-            setPointsToUse(0);
-        }
-    }, [paymentChoice, maxPointsPossible]);
+  if (paymentChoice === "CASH") {
+    setPointsToUse(0);
+  }
+}, [paymentChoice]);
+
 
     const handlePointsChange = (val) => {
         const num = parseInt(val) || 0;
@@ -342,7 +349,7 @@ const Payment = () => {
                                 >
                                     Cash Only
                                 </button>
-                                <button
+                                {/* <button
                                     onClick={() => setPaymentChoice("POINTS")}
                                     disabled={loyaltyCard.pointsBalance === 0}
                                     style={{
@@ -352,7 +359,7 @@ const Payment = () => {
                                     }}
                                 >
                                     Points Only
-                                </button>
+                                </button> */}
                                 <button
                                     onClick={() => setPaymentChoice("BOTH")}
                                     disabled={loyaltyCard.pointsBalance === 0}

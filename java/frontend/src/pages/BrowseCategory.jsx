@@ -203,7 +203,7 @@ const BrowseCategory = () => {
                     >{prod.prodName}</h3>
 
                     <div className={styles.prodPrice}>
-                      ₹{prod.cardholderPrice}
+                      ₹{prod.mrpPrice}
                     </div>
 
                     {/* 🔥 ADD TO CART */}
@@ -325,7 +325,7 @@ const BrowseCategory = () => {
                     </h3>
 
                     <div className={styles.prodPrice}>
-                      ₹ {prod.cardholderPrice}
+                      ₹ {prod.mrpPrice}
                     </div>
 
                     {/* ✅ Add To Cart Button */}

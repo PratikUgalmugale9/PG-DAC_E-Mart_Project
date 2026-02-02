@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.Cartitem;
+import com.example.entity.Loyaltycard;
 import com.example.entity.OrderItem;
 import com.example.entity.Ordermaster;
 import com.example.entity.User;
@@ -76,27 +77,96 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
             totalAmount = totalAmount.add(itemTotal);
         }
+        
+        
+        int totalPointsRequired = 0;
 
-        // ✅ Step 4: Handle Points Redemption
-        BigDecimal amountPaidByPoints = BigDecimal.ZERO;
-        if (pointsToRedeem != null && pointsToRedeem.compareTo(BigDecimal.ZERO) > 0) {
-            // Rule: 1 point = ₹1
-            amountPaidByPoints = pointsToRedeem;
+        for (Cartitem item : cartItems) {
+            Integer productPoints = item.getProd().getPointsToBeRedeem();
 
-            // Validate points against total amount
-            if (amountPaidByPoints.compareTo(totalAmount) > 0) {
-                amountPaidByPoints = totalAmount; // Cannot redeem more than the total
-            }
-
-            // Deduct points from loyalty card
-            try {
-                loyaltycardService.updatePoints(userId, -amountPaidByPoints.intValue());
-            } catch (Exception e) {
-                throw new RuntimeException("Points redemption failed: " + e.getMessage());
+            if (productPoints != null && productPoints > 0) {
+                totalPointsRequired += productPoints * item.getQuantity();
             }
         }
 
+
+        // ✅ Step 4: Handle Points Redemption
+        BigDecimal amountPaidByPoints = BigDecimal.ZERO;
+//        if (pointsToRedeem != null && pointsToRedeem.compareTo(BigDecimal.ZERO) > 0) {
+//            // Rule: 1 point = ₹1
+//            amountPaidByPoints = pointsToRedeem;
+//
+//            // Validate points against total amount
+//            if (amountPaidByPoints.compareTo(totalAmount) > 0) {
+//                amountPaidByPoints = totalAmount; // Cannot redeem more than the total
+//            }
+//
+//            // Deduct points from loyalty card
+//            try {
+//                loyaltycardService.updatePoints(userId, -amountPaidByPoints.intValue());
+//            } catch (Exception e) {
+//                throw new RuntimeException("Points redemption failed: " + e.getMessage());
+//            }
+//        }
+        
+       
+//		if (pointsToRedeem != null && pointsToRedeem.compareTo(BigDecimal.ZERO) > 0) {
+//
+//            Loyaltycard card = loyaltycardService.getLoyaltycardByUserId(userId);
+//
+//            if (card == null || card.getPointsBalance() <= 0) {
+//                throw new RuntimeException("No loyalty points available");
+//            }
+//
+//            int availablePoints = card.getPointsBalance();
+//
+//            if (pointsToRedeem.intValue() > availablePoints) {
+//                throw new RuntimeException(
+//                    "Insufficient loyalty points. Available: " + availablePoints
+//                );
+//            }
+//
+//            amountPaidByPoints = pointsToRedeem.min(totalAmount);
+//
+//            // Deduct points
+//            loyaltycardService.updatePoints(userId, -amountPaidByPoints.intValue());
+//        }
+
+       // BigDecimal amountPaidByPoints1 = BigDecimal.ZERO;
+
+        if ("LOYALTY".equalsIgnoreCase(paymentMode)) {
+
+            Loyaltycard card = loyaltycardService.getLoyaltycardByUserId(userId);
+
+            if (card == null) {
+                throw new RuntimeException("Loyalty card not found");
+            }
+
+            if (card.getPointsBalance() < totalPointsRequired) {
+                throw new RuntimeException(
+                    "Insufficient loyalty points. Required: " +
+                    totalPointsRequired + ", Available: " + card.getPointsBalance()
+                );
+            }
+
+            // 1 point = ₹1
+            amountPaidByPoints = BigDecimal.valueOf(totalPointsRequired);
+
+            // Deduct points
+            loyaltycardService.updatePoints(userId, -totalPointsRequired);
+        }
+
+
         BigDecimal amountPaidByCash = totalAmount.subtract(amountPaidByPoints);
+       
+
+     // 🚫 BLOCK POINTS-ONLY PURCHASE (MANDATORY RULE)
+     if (amountPaidByCash.compareTo(BigDecimal.ZERO) <= 0) {
+         throw new RuntimeException(
+             "Points-only purchase is not allowed. Please pay some amount by cash."
+         );
+     }
+
 
         // ✅ Step 5: Create OrderMaster
         Ordermaster ordermaster = new Ordermaster();
@@ -133,6 +203,21 @@ public class OrderServiceImpl implements OrderService {
 
         // ✅ Step 8: Clear cart after order is placed
         cartItemRepository.deleteAll(cartItems);
+        
+     // ✅ Step 9: Add Loyalty Points (10% of total amount)
+        try {
+            int pointsEarned = totalAmount
+                    .multiply(BigDecimal.valueOf(0.10))
+                    .intValue(); // floor value
+
+            if (pointsEarned > 0) {
+                loyaltycardService.updatePoints(userId, pointsEarned);
+            }
+        } catch (Exception e) {
+            // Do NOT rollback order for reward failure
+            System.err.println("Loyalty points credit failed: " + e.getMessage());
+        }
+
 
         return savedOrder;
     }

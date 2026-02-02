@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.entity.Product;
+import com.example.repository.ProductRepository;
 import com.example.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,12 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
+    
+    private ProductRepository productRepository;
+    
+    public ProductController(ProductService productService,ProductRepository productRepository) {
         this.productService = productService;
+        this.productRepository=productRepository;
     }
 
     // CREATE or UPDATE product
@@ -53,4 +57,13 @@ public class ProductController {
         return ResponseEntity.ok(
                 productService.getProductsByCategory(categoryId));
     }
+    
+    
+    //for search
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam String q) {
+        return productRepository
+            .findByProdNameContainingIgnoreCase(q);
+    }
+
 }

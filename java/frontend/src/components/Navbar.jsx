@@ -15,9 +15,15 @@ import { useTranslation } from "react-i18next";
 
 const Navbar = ({ onCartClick, onLogoClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+ const [isLoggedIn, setIsLoggedIn] = useState(
+  !!localStorage.getItem("token")
+);
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  //for search Query
+  const [searchQuery, setSearchQuery] = useState("");
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -27,7 +33,7 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
   // 🌍 i18n
   const { t, i18n } = useTranslation();
 
-  // 🔐 Check login status (JWT-based)
+ // 🔐 Check login status (JWT-based)
   useEffect(() => {
     const checkLogin = () => {
       const token = localStorage.getItem("token");
@@ -38,6 +44,31 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
     window.addEventListener("storage", checkLogin);
     return () => window.removeEventListener("storage", checkLogin);
   }, [location]);
+
+//   useEffect(() => {
+//   const token = localStorage.getItem("token");
+
+//   if (!token) {
+//     setIsLoggedIn(false);
+//     return;
+//   }
+
+//   // OPTIONAL but recommended
+//   try {
+//     // basic expiry check (JWT)
+//     const payload = JSON.parse(atob(token.split(".")[1]));
+//     if (payload.exp * 1000 < Date.now()) {
+//       localStorage.removeItem("token");
+//       localStorage.removeItem("user");
+//       setIsLoggedIn(false);
+//     } else {
+//       setIsLoggedIn(true);
+//     }
+//   } catch (e) {
+//     setIsLoggedIn(false);
+//   }
+// }, []);
+
 
   // 🧊 Scroll effect
   useEffect(() => {
@@ -71,7 +102,17 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
     setIsLoggedIn(false);
     setShowDropdown(false);
     navigate("/login");
+     window.location.reload();
   };
+
+  const handleSearch = () => {
+  if (!searchQuery.trim()) return;
+
+  navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+  setSearchQuery("");
+};
+
+  
 
   return (
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
@@ -86,10 +127,16 @@ const Navbar = ({ onCartClick, onLogoClick }) => {
         <div className={styles.searchContainer}>
           <FiSearch className={styles.searchIcon} />
           <input
-            type="text"
-            placeholder={t("searchPlaceholder")}
-            className={styles.searchInput}
-          />
+              type="text"
+              placeholder={t("searchPlaceholder")}
+              className={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+             onKeyDown={(e) => {
+    if (e.key === "Enter") handleSearch();
+  }}
+/>
+
         </div>
 
         {/* 🌍 Language Switch */}

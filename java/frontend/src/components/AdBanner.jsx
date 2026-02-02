@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/AdBanner.module.css';
+import { useNavigate } from "react-router-dom";
+
 
 const AdBanner = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
 
+    const navigate = useNavigate();
+
+
     const slides = [
         {
             id: 1,
+            category: "HP003",
             headline: "Mega Electronics Sale",
             tagline: "Upgrade Your Tech",
             description: "Up to 50% off on premium gadgets, smartphones, and accessories",
@@ -24,6 +30,7 @@ const AdBanner = () => {
         },
         {
             id: 2,
+             category: "FP001",
             headline: "Latest Fashion Trends",
             tagline: "Summer Collection",
             description: "Discover the hottest styles for the season. Limited time offers!",
@@ -40,6 +47,7 @@ const AdBanner = () => {
         },
         {
             id: 3,
+             category: "HP001",
             headline: "Smart Home Deals",
             tagline: "Modern Living",
             description: "Transform your home with the latest appliances and smart devices",
@@ -78,6 +86,12 @@ const AdBanner = () => {
         setCurrentSlide(index);
     };
 
+    const handleCategoryNavigation = (category) => {
+        setIsPaused(true);      
+  navigate(`/browse/${category}`);
+};
+
+
     return (
         <div
             className={styles.bannerContainer}
@@ -115,7 +129,9 @@ const AdBanner = () => {
                                             <polyline points="9 18 15 12 9 6"></polyline>
                                         </svg>
                                     </button>
-                                    <button className={styles.secondaryBtn}>
+                                    <button className={styles.secondaryBtn} 
+                                    onClick={() => handleCategoryNavigation(slide.category)}
+                                    >
                                         {slide.secondaryBtn}
                                     </button>
                                 </div>
