@@ -9,11 +9,11 @@ namespace EMart.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("CartItem_Id")]
+        [Column("cart_item_id")]
         public int Id { get; set; }
 
         [Required]
-        [Column("Cart_Id")]
+        [Column("cart_id")]
         public int CartId { get; set; }
 
         [ForeignKey("CartId")]
@@ -21,17 +21,18 @@ namespace EMart.Models
         public virtual Cart Cart { get; set; } = null!;
 
         [Required]
-        [Column("Prod_Id")]
+        [Column("prod_id")]
         public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; } = null!;
 
         [Required]
+        [Column("quantity")]
         public int Quantity { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(10,2)")]
+        [Column("price_snapshot", TypeName = "decimal(10,2)")]
         public decimal PriceSnapshot { get; set; }
     }
 }
