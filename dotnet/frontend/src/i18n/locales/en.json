@@ -1,0 +1,9 @@
+﻿{
+  "searchPlaceholder": "Search products...",
+  "cart": "Cart",
+  "profile": "Profile",
+  "myProfile": "My Profile",
+  "logout": "Logout",
+  "login": "Login",
+  "cartLoginAlert": "Please login to access your cart"
+}
