@@ -8,6 +8,7 @@ namespace EMart.Services
     public interface ICartService
     {
         Task<CartResponse> GetUserCartAsync(string email);
+        Task<List<CartItemResponse>> GetUserCartItemsAsync(string email);
         Task<CartItemResponse> AddOrUpdateItemAsync(string email, CartItemRequest request);
         Task<bool> RemoveItemAsync(string email, int cartItemId);
         Task<CartItemResponse> UpdateQuantityAsync(string email, int cartItemId, int quantity);
@@ -62,6 +63,27 @@ namespace EMart.Services
             var total = itemResponses.Sum(i => i.TotalPrice);
 
             return new CartResponse(cart.Id, cart.IsActive, itemResponses, total);
+        }
+
+        public async Task<List<CartItemResponse>> GetUserCartItemsAsync(string email)
+        {
+            var user = await _context.Users
+                .Include(u => u.Cart)
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null) throw new Exception("User not found");
+
+            if (user.Cart == null)
+            {
+                return new List<CartItemResponse>();
+            }
+
+            var cartItems = await _context.Cartitems
+                .Include(ci => ci.Product)
+                .Where(ci => ci.CartId == user.Cart.Id)
+                .ToListAsync();
+
+            return cartItems.Select(MapToResponse).ToList();
         }
 
         public async Task<CartItemResponse> AddOrUpdateItemAsync(string email, CartItemRequest request)

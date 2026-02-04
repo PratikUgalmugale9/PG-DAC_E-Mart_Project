@@ -1,0 +1,58 @@
+## Ignore Visual Studio / VS Code / Rider files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build results
+bin/
+obj/
+out/
+
+## .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ASP.NET Core
+appsettings.Development.json
+appsettings.Local.json
+
+## Logs
+*.log
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Publish output
+publish/
+wwwroot/
+
+## Test results
+TestResults/
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+## Rider
+*.sln.iml
+
+## Environment variables
+.env
+.env.local
+.env.development
+.env.production
+
+## Certificates
+*.pfx
+
+## User-specific files
+*.swp
+*.tmp
