@@ -225,6 +225,8 @@ const Payment = () => {
         try {
             setLoading(true);
 
+            console.log("Creating Order with Payload:", { userId, cartId, paymentMode });
+
             // Step 1: Place Order
             const orderRes = await axios.post("http://localhost:8080/orders/place", {
                 userId: userId,
@@ -259,7 +261,8 @@ const Payment = () => {
 
         } catch (error) {
             console.error("Payment failed", error);
-            alert("Failed to process order. Please try again.");
+            const serverMsg = error.response?.data?.message || "Unknown server error";
+            alert(`Failed to process order: ${serverMsg}`);
             setLoading(false);
         }
     };

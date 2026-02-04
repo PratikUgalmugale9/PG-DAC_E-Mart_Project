@@ -32,11 +32,13 @@ const ProfilePage = () => {
 
                 if (userId) {
                     try {
-                        const response = await axios.get(`http://localhost:8080/api/loyaltycard/user/${userId}`, {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
+                        const response = await axios.get(
+  "http://localhost:8080/api/loyaltycard/my",
+  {
+    headers: { Authorization: `Bearer ${token}` }
+  }
+);
+
 
                         // Check for active status like CartPage does
                         if (response.data && String(response.data.isActive).toLowerCase() === 'y') {
@@ -157,9 +159,47 @@ const ProfilePage = () => {
                         </p>
                     </div>
                 ) : (
-                    <p style={{ color: '#64748b', marginBottom: '30px', fontSize: '0.9rem' }}>
-                        No loyalty card linked to this account.
-                    </p>
+                    <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                        <p style={{ color: '#64748b', marginBottom: '15px', fontSize: '0.9rem' }}>
+                            No loyalty card linked to this account.
+                        </p>
+                       <button
+  className={styles.logoutBtn}
+  style={{
+    background: 'linear-gradient(135deg, #bf953f 0%, #fcf6ba 50%, #b38728 100%)',
+    color: '#1a1a1a'
+  }}
+  onClick={async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first");
+        return;
+      }
+
+      // Simple signup - backend generates all card details
+      await axios.post(
+        "http://localhost:8080/api/loyaltycard/signup",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("🎉 Welcome! Your Loyalty Card has been created with 100 bonus points!");
+      window.location.reload();
+
+    } catch (err) {
+      console.error("Failed to create loyalty card:", err);
+      alert(
+        "Failed to create loyalty card: " +
+        (err.response?.data?.message || err.message)
+      );
+    }
+  }}
+>
+  ✨ Become a Loyalty Member
+</button>
+
+                    </div>
                 )}
 
                 <button className={styles.logoutBtn} onClick={handleLogout}>

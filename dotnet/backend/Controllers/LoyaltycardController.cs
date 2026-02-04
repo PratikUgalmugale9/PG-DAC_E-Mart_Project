@@ -38,6 +38,42 @@ namespace EMart.Controllers
             return Ok(card);
         }
 
+        // ===================== SIGNUP (Create for logged-in user) =====================
+        [HttpPost("signup")]
+        public async Task<ActionResult<Loyaltycard>> Signup()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(UserEmail)) return Unauthorized();
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == UserEmail);
+                if (user == null) return NotFound(new { message = "User not found" });
+
+                // Check if user already has a card
+                var existingCard = await _loyaltycardService.GetLoyaltycardByUserIdAsync(user.Id);
+                if (existingCard != null) return BadRequest(new { message = "You already have a loyalty card" });
+
+                // Create new card with server-generated values
+                var newCard = new Loyaltycard
+                {
+                    UserId = user.Id,
+                    CardNumber = $"EMART-{user.Id}-{DateTime.UtcNow.Ticks.ToString("X")}",
+                    PointsBalance = 100, // Welcome bonus
+                    IssuedDate = DateTime.UtcNow,
+                    ExpiryDate = DateTime.UtcNow.AddYears(1),
+                    IsActive = 'Y'
+                };
+
+                var created = await _loyaltycardService.CreateLoyaltycardAsync(newCard);
+                return Ok(created);
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new { message = msg });
+            }
+        }
+
         // ===================== CREATE =====================
         [HttpPost]
         public async Task<ActionResult<Loyaltycard>> Create([FromBody] Loyaltycard loyaltycard)
@@ -49,7 +85,8 @@ namespace EMart.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new { message = msg });
             }
         }
 

@@ -5,13 +5,7 @@ using System.Security.Claims;
 
 namespace EMart.Services
 {
-    public interface IOrderService
-    {
-        Task<Ordermaster> PlaceOrderFromCartAsync(int userId, int? cartId, string paymentMode);
-        Task<List<Ordermaster>> GetAllOrdersAsync();
-        Task<Ordermaster?> GetOrderByIdAsync(int id);
-        Task<List<Ordermaster>> GetOrdersByUserAsync(int userId);
-    }
+    // Interface moved to Services/IOrderService.cs
 
     public class OrderService : IOrderService
     {
@@ -122,7 +116,8 @@ namespace EMart.Services
             catch (Exception ex)
             {
                 // Do NOT rollback order for reward failure
-                Console.WriteLine($"Loyalty points credit failed: {ex.Message}");
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                Console.WriteLine($"Loyalty points credit failed: {msg}");
             }
 
             await _context.SaveChangesAsync();

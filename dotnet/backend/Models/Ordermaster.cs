@@ -35,12 +35,6 @@ namespace EMart.Models
         [MaxLength(30)]
         public string? PaymentMode { get; set; }
 
-        [Column("amount_paid_by_cash", TypeName = "decimal(10,2)")]
-        public decimal? AmountPaidByCash { get; set; }
-
-        [Column("amount_paid_by_points", TypeName = "decimal(10,2)")]
-        public decimal? AmountPaidByPoints { get; set; }
-
         public virtual ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 }

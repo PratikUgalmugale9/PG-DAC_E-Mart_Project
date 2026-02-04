@@ -153,7 +153,7 @@ const HomePage = () => {
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <img
-                                            src={`/${prod.prodImagePath}`}
+                                            src={`${prod.prodImagePath}`}
                                             alt={prod.prodName}
                                             className={styles.prodImage}
                                             onError={(e) => e.target.src = '/images/default.jpg'}

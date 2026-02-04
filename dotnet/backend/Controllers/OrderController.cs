@@ -28,7 +28,8 @@ namespace EMart.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(new { message = msg });
             }
         }
 

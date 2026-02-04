@@ -16,7 +16,7 @@ const categories = [
     },
     {
         id: 2,
-        category: "FP001",
+        category: "C002",
         label: 'Fashion',
         icon: (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -60,7 +60,7 @@ const categories = [
     },
     {
         id: 6,
-        category: "WP001",
+        category: "FW05",
         label: 'Beauty',
         icon: (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

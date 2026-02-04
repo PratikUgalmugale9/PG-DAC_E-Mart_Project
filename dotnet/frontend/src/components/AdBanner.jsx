@@ -13,7 +13,7 @@ const AdBanner = () => {
     const slides = [
         {
             id: 1,
-            category: "HP003",
+            category: "MB01",
             headline: "Mega Electronics Sale",
             tagline: "Upgrade Your Tech",
             description: "Up to 50% off on premium gadgets, smartphones, and accessories",
@@ -30,7 +30,7 @@ const AdBanner = () => {
         },
         {
             id: 2,
-             category: "FP001",
+             category: "FW01",
             headline: "Latest Fashion Trends",
             tagline: "Summer Collection",
             description: "Discover the hottest styles for the season. Limited time offers!",

@@ -188,7 +188,7 @@ const BrowseCategory = () => {
                     style={{ cursor: 'pointer' }}
                   >
                     <img
-                      src={`${prod.prodImagePath}`}
+                      src={`/${prod.prodImagePath}`}
                       alt={prod.prodName}
                       className={styles.prodImage}
                       onError={(e) => e.target.src = "/images/default.jpg"}
@@ -305,7 +305,7 @@ const BrowseCategory = () => {
                     style={{ cursor: 'pointer' }}
                   >
                     <img
-                      src={`/${prod.prodImagePath}`}
+                      src={`${prod.prodImagePath}`}
                       alt={prod.prodName}
                       className={styles.prodImage}
                       onError={(e) =>
@@ -339,7 +339,7 @@ const BrowseCategory = () => {
                             id: prod.id,
                             name: prod.prodName,
                             price: prod.cardholderPrice,
-                            image: `/${prod.prodImagePath}`,
+                            image: `${prod.prodImagePath}`,
                             quantity: 1,
                           });
                         }

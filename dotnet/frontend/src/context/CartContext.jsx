@@ -61,7 +61,7 @@ const navigate=useNavigate();
                 mrpPrice: item.mrpPrice,
                 cardholderPrice: item.cardholderPrice,
                 pointsToBeRedeem: item.pointsToBeRedeem,
-                image: `/${item.prodImagePath}`,
+                image: `${item.prodImagePath}`,
                 quantity: item.quantity
             }));
 

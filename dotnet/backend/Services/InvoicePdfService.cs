@@ -8,13 +8,13 @@ namespace EMart.Services
     // ===== Interface =====
     public interface IInvoicePdfService
     {
-        byte[] GenerateInvoiceAsBytes(Ordermaster order, List<OrderItem> items);
+        byte[] GenerateInvoicePdf(Ordermaster order, List<OrderItem> items);
     }
 
     // ===== Implementation =====
     public class InvoicePdfService : IInvoicePdfService
     {
-        public byte[] GenerateInvoiceAsBytes(Ordermaster order, List<OrderItem> items)
+        public byte[] GenerateInvoicePdf(Ordermaster order, List<OrderItem> items)
         {
             // SIMPLE PDF CONTENT (works, lightweight)
             var sb = new StringBuilder();

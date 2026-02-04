@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 using EMart.Middleware;
-using System.IdentityModel.Tokens.Jwt;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("http://localhost:5173") // React URL
+                .WithOrigins("http://localhost:5173","http://localhost:5174") // React URL
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         }
@@ -48,8 +48,14 @@ var key = Encoding.UTF8.GetBytes(
     builder.Configuration["JwtSettings:Key"] ?? "emart_super_secret_key_1234567890_antigravity"
 );
 
-builder
-    .Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -58,7 +64,7 @@ builder
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         ClockSkew = TimeSpan.FromMinutes(5),
-        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" // ClaimTypes.Name
+        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
     };
 });
 

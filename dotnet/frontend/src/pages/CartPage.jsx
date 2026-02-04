@@ -457,8 +457,11 @@ const CartPage = () => {
                 const userId = user.id || user.userId;
 
                 const res = await axios.get(
-                    `http://localhost:8080/api/loyaltycard/user/${userId}`,
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    `http://localhost:8080/api/LoyaltyCard/user/${userId}`,
+                    { 
+                        headers: { Authorization: `Bearer ${token}` },
+                        validateStatus: (status) => status < 500 // Resolve 404s instead of rejecting
+                    }
                 );
 
                 if (res.data && String(res.data.isActive).toLowerCase() === "y") {

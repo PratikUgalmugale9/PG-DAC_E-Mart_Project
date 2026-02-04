@@ -82,7 +82,7 @@ const ProductDetails = () => {
                 {/* Left Side - Image */}
                 <div className={styles.imageSection}>
                     <img
-                        src={`/${product.prodImagePath}`}
+                        src={`${product.prodImagePath}`}
                         alt={product.prodName}
                         className={styles.productImage}
                         onError={(e) => {

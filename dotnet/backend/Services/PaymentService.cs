@@ -5,20 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EMart.Services
 {
-    public interface IInvoicePdfService
-    {
-        byte[] GenerateInvoicePdf(Ordermaster order, List<OrderItem> items);
-    }
-
-    public class InvoicePdfService : IInvoicePdfService
-    {
-        public byte[] GenerateInvoicePdf(Ordermaster order, List<OrderItem> items)
-        {
-            // Placeholder for PDF generation
-            // In a real scenario, use QuestPDF or iText7
-            return System.Text.Encoding.UTF8.GetBytes("Dummy PDF Content for Order " + order.Id);
-        }
-    }
+    // IInvoicePdfService and InvoicePdfService moved to their own files/removed if duplicate.
 
     public interface IPaymentService
     {
