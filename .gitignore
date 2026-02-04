@@ -51,3 +51,7 @@ build/
 /.metadata/
 # Backend logs
 java/backend/logs/
+
+# .NET build artifacts
+dotnet/**/bin/
+dotnet/**/obj/

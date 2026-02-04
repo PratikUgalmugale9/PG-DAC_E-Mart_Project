@@ -1,1 +1,4 @@
 /.metadata/
+# .NET build artifacts
+dotnet/**/bin/
+dotnet/**/obj/
