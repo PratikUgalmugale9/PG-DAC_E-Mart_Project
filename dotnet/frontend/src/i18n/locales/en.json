@@ -1,9 +1,75 @@
 ﻿{
-  "searchPlaceholder": "Search products...",
-  "cart": "Cart",
-  "profile": "Profile",
-  "myProfile": "My Profile",
-  "logout": "Logout",
-  "login": "Login",
-  "cartLoginAlert": "Please login to access your cart"
+  "navbar": {
+    "searchPlaceholder": "Search products...",
+    "cart": "Cart",
+    "profile": "Profile",
+    "myProfile": "My Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "cartLoginAlert": "Please login to access your cart",
+    "languageEN": "EN",
+    "languageHI": "HI"
+  },
+  "categories": {
+    "mobiles": "Mobiles",
+    "fashion": "Fashion",
+    "electronics": "Electronics",
+    "appliances": "Appliances",
+    "beauty": "Beauty",
+    "sports": "Sports",
+    "tvs": "TVs"
+  },
+  "hero": {
+    "discountBadge": "50% OFF",
+    "title": "Mega Electronics Sale",
+    "subtitle": "Upgrade Your Tech",
+    "description": "Up to 50% off on premium gadgets, smartphones, and accessories",
+    "shopNow": "Shop Now",
+    "viewOffers": "View Offers"
+  },
+  "common": {
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "homepage": {
+    "topCategories": "Top Categories",
+    "featuredProducts": "Featured Products",
+    "viewAll": "View All",
+    "loadingFeatured": "Loading featured products..."
+  },
+  "banner2": {
+    "title": "Latest Fashion Trends",
+    "subtitle": "Summer Collection",
+    "description": "Discover the hottest styles for the season. Limited time offers!",
+    "secondary": "New Arrivals"
+  },
+  "banner3": {
+    "title": "Smart Home Deals",
+    "subtitle": "Modern Living",
+    "description": "Transform your home with the latest appliances and smart devices",
+    "secondary": "Explore"
+  },
+  "footer": {
+    "description": "Premium shopping experience with a focus on quality and customer satisfaction. Explore our wide range of categories.",
+    "shop": "Shop",
+    "electronics": "Electronics",
+    "fashion": "Fashion",
+    "homeAppliances": "Home & Appliances",
+    "sports": "Sports",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "trackOrder": "Track Order",
+    "returns": "Returns",
+    "shippingInfo": "Shipping Info",
+    "company": "Company",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "address": "123 Street, City, Country",
+    "copyright": "© 2026 eMart. Designed for excellence.",
+    "sitemap": "Sitemap",
+    "cookies": "Cookies"
+  }
 }

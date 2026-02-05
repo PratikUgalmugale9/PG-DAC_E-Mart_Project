@@ -1,9 +1,75 @@
 ﻿{
-  "searchPlaceholder": "उत्पाद खोजें...",
-  "cart": "कार्ट",
-  "profile": "प्रोफ़ाइल",
-  "myProfile": "मेरी प्रोफ़ाइल",
-  "logout": "लॉगआउट",
-  "login": "लॉगिन",
-  "cartLoginAlert": "कार्ट देखने के लिए कृपया लॉगिन करें"
+  "navbar": {
+    "searchPlaceholder": "उत्पाद खोजें...",
+    "cart": "कार्ट",
+    "profile": "प्रोफ़ाइल",
+    "myProfile": "मेरी प्रोफ़ाइल",
+    "logout": "लॉगआउट",
+    "login": "लॉगिन",
+    "cartLoginAlert": "कार्ट देखने के लिए कृपया लॉगिन करें",
+    "languageEN": "अंग्रेज़ी",
+    "languageHI": "हिंदी"
+  },
+  "categories": {
+    "mobiles": "मोबाइल्स",
+    "fashion": "फ़ैशन",
+    "electronics": "इलेक्ट्रॉनिक्स",
+    "appliances": "घरेलू उपकरण",
+    "beauty": "सौंदर्य",
+    "sports": "खेल",
+    "tvs": "टीवी"
+  },
+  "hero": {
+    "discountBadge": "50% छूट",
+    "title": "मेगा इलेक्ट्रॉनिक्स सेल",
+    "subtitle": "अपनी टेक्नोलॉजी अपग्रेड करें",
+    "description": "प्रीमियम गैजेट्स, स्मार्टफोन और एक्सेसरीज़ पर 50% तक की छूट",
+    "shopNow": "अभी खरीदें",
+    "viewOffers": "ऑफर देखें"
+  },
+  "common": {
+    "next": "अगला",
+    "previous": "पिछला"
+  },
+  "homepage": {
+    "topCategories": "शीर्ष श्रेणियाँ",
+    "featuredProducts": "विशेष उत्पाद",
+    "viewAll": "सभी देखें",
+    "loadingFeatured": "विशेष उत्पाद लोड हो रहे हैं..."
+  },
+  "banner2": {
+    "title": "नवीनतम फैशन ट्रेंड्स",
+    "subtitle": "समर कलेक्शन",
+    "description": "सीजन के सबसे हॉट स्टाइल्स खोजें। सीमित समय ऑफर!",
+    "secondary": "नए उत्पाद"
+  },
+  "banner3": {
+    "title": "स्मार्ट होम डील्स",
+    "subtitle": "आधुनिक जीवन",
+    "description": "नवीनतम उपकरणों और स्मार्ट डिवाइस के साथ अपने घर को बदलें",
+    "secondary": "देखें"
+  },
+  "footer": {
+    "description": "गुणवत्ता और ग्राहक संतुष्टि पर ध्यान देने वाला प्रीमियम शॉपिंग अनुभव। हमारी विस्तृत श्रेणियों का अन्वेषण करें।",
+    "shop": "खरीदारी",
+    "electronics": "इलेक्ट्रॉनिक्स",
+    "fashion": "फ़ैशन",
+    "homeAppliances": "घर और उपकरण",
+    "sports": "खेल",
+    "support": "सहायता",
+    "helpCenter": "सहायता केंद्र",
+    "trackOrder": "ऑर्डर ट्रैक करें",
+    "returns": "रिटर्न",
+    "shippingInfo": "शिपिंग जानकारी",
+    "company": "कंपनी",
+    "aboutUs": "हमारे बारे में",
+    "careers": "करियर",
+    "privacyPolicy": "गोपनीयता नीति",
+    "terms": "सेवा की शर्तें",
+    "contact": "संपर्क",
+    "address": "123 स्ट्रीट, शहर, देश",
+    "copyright": "© 2026 eMart. उत्कृष्टता के लिए डिज़ाइन किया गया।",
+    "sitemap": "साइटमैप",
+    "cookies": "कुकीज़"
+  }
 }
