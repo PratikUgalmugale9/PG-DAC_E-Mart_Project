@@ -147,21 +147,6 @@ namespace EMart.Services
             }
 
             // ========================================
-            // VALIDATION 5: Points-Only Checkout Prevention
-            // ========================================
-            // Calculate total cash amount (items NOT using POINTS pricing)
-            decimal totalCashAmount = cartItems
-                .Where(ci => ci.PriceType != "POINTS")
-                .Sum(ci => ci.PriceSnapshot * ci.Quantity);
-
-            if (totalCashAmount <= 0 && cartItems.Any(ci => ci.PriceType == "POINTS"))
-            {
-                throw new Exception(
-                    "Points-only purchase is not allowed. At least one item must have a cash value. Please add a non-points item to your cart."
-                );
-            }
-
-            // ========================================
             // CALCULATE TOTALS
             // ========================================
             decimal totalAmount = cartItems.Sum(ci => ci.PriceSnapshot * ci.Quantity);

@@ -125,11 +125,13 @@ namespace EMart.Services
                     if (p == null) continue;
 
                     var listPrice = p.MrpPrice ?? 0;
-                    var ourPrice = item.Price; // Use actual price from OrderItem (handles MRP vs Cardholder selection)
+                    
+                    // For POINTS items, the cash price is 0 (paid via points only)
+                    var ourPrice = (item.PriceType == "POINTS") ? 0 : item.Price;
                     var qty = item.Quantity;
                     var amount = ourPrice * qty;
 
-                    productTotal += amount;
+                    productTotal += amount; // Only adds cash amount (0 for POINTS items)
                     totalPointsRedeemed += item.PointsUsed;
 
                     itemTable.AddCell(CreateItemCell($"P{p.Id}", normalFont, Element.ALIGN_CENTER, borderColor));
@@ -157,7 +159,12 @@ namespace EMart.Services
                 decimal deliveryCharges = (productTotal < 500 && productTotal > 0) ? 40.00m : 0.00m;
                 // Points are ALREADY subtracted from ourPrice, so final payable is productTotal + delivery
                 decimal finalPayable = productTotal + deliveryCharges;
-                int pointsEarned = (int)(productTotal * 0.10m);
+                
+                // Calculate earned points ONLY on cash-paid items (exclude POINTS items)
+                // AND only if user has loyalty benefits (indicated by any points used or loyalty pricing)
+                bool hasLoyaltyBenefits = totalPointsRedeemed > 0 || 
+                                         items.Any(i => i.PriceType == "LOYALTY" || i.PriceType == "POINTS");
+                int pointsEarned = hasLoyaltyBenefits ? (int)(productTotal * 0.10m) : 0;
 
                 document.Add(new Paragraph(" "));
 

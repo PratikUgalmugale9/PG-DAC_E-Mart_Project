@@ -23,7 +23,14 @@ const Payment = () => {
     const [success, setSuccess] = useState(false);
 
     // Calculate totals based on item-level loyalty selection
-    const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    // For POINTS items, don't add to cash subtotal (they're paid via points only)
+    const subtotal = cartItems.reduce((acc, item) => {
+        if (item.priceType === 'POINTS') {
+            return acc; // Don't add POINTS items to cash subtotal
+        }
+        return acc + (item.price * item.quantity);
+    }, 0);
+    
     const totalPointsRedeemed = cartItems.reduce((acc, item) => acc + (item.pointsUsed || 0) * item.quantity, 0);
     const delivery = subtotal > 500 ? 0 : 40;
     const totalPayable = subtotal + delivery;

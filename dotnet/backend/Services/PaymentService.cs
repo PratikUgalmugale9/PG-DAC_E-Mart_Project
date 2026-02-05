@@ -79,21 +79,31 @@ namespace EMart.Services
                     }
 
                     // 2. AWARD POINTS (10% of total product price, excluding delivery)
-                    // order.TotalAmount contains the sum of (Price * Quantity) of all items
-                    int pointsEarned = (int)(order.TotalAmount * 0.10m);
-
-                    if (pointsEarned > 0)
+                    // ONLY award points if user has an active loyalty card
+                    var loyaltyCard = await _loyaltycardService.GetLoyaltycardByUserIdAsync(payment.UserId);
+                    
+                    if (loyaltyCard != null && (loyaltyCard.IsActive == 'Y' || loyaltyCard.IsActive == 'y'))
                     {
-                        try
+                        // Calculate points ONLY on cash-paid items (exclude POINTS items)
+                        decimal cashPaidAmount = order.Items
+                            .Where(i => i.PriceType != "POINTS")
+                            .Sum(i => i.Price * i.Quantity);
+                        
+                        int pointsEarned = (int)(cashPaidAmount * 0.10m);
+
+                        if (pointsEarned > 0)
                         {
-                            await _loyaltycardService.UpdatePointsAsync(
-                                payment.UserId,
-                                pointsEarned
-                            );
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Failed to award points: {ex.Message}");
+                            try
+                            {
+                                await _loyaltycardService.UpdatePointsAsync(
+                                    payment.UserId,
+                                    pointsEarned
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Failed to award points: {ex.Message}");
+                            }
                         }
                     }
 

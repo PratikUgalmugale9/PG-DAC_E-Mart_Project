@@ -59,7 +59,12 @@ const CartPage = () => {
         cartItems.forEach(item => {
             const mrp = item.mrpPrice || item.price || 0;
             mrpTotal += mrp * item.quantity;
-            cashSubtotal += (item.price * item.quantity);
+            
+            // For POINTS items, don't add to cash subtotal (they're paid via points only)
+            if (item.priceType !== 'POINTS') {
+                cashSubtotal += (item.price * item.quantity);
+            }
+            
             pointsRedeemedTotal += (item.pointsUsed || 0) * item.quantity;
         });
 
@@ -77,6 +82,7 @@ const CartPage = () => {
             pointsRedeemed: pointsRedeemedTotal,
             pointsToEarn: earningEstimation
         });
+
 
     }, [cartItems]);
 

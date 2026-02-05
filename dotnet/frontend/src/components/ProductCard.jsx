@@ -13,8 +13,8 @@ const ProductCard = ({ product }) => {
     const totalPointsUsed = cartItems.reduce((sum, item) => sum + (item.pointsUsed || 0), 0);
     const availablePoints = pointsBalance - totalPointsUsed;
 
-    // Pricing selection state
-    const [selectedPriceType, setSelectedPriceType] = useState('MRP');
+    // Pricing selection state - checkbox for opt-in (default: unchecked = MRP)
+    const [useLoyaltyBenefit, setUseLoyaltyBenefit] = useState(false);
 
     // Check if product is in cart
     const isInCart = cartItems.some(item => item.id === product.id);
@@ -34,22 +34,24 @@ const ProductCard = ({ product }) => {
         else if (!hasCardholderPrice && hasPoints) pricingCase = 'CASE_3';
     }
 
-    // Set default selection
+    // Reset checkbox when product changes
     useEffect(() => {
-        if (pricingCase === 'CASE_2') {
-            setSelectedPriceType('LOYALTY');
-        } else {
-            setSelectedPriceType('MRP');
-        }
-    }, [pricingCase]);
+        setUseLoyaltyBenefit(false);
+    }, [product.id]);
 
-    const handlePriceTypeChange = (e, type) => {
+    const handleCheckboxChange = (e) => {
         e.stopPropagation();
-        if ((type === 'POINTS' || (type === 'LOYALTY' && hasPoints)) && points > availablePoints) {
-            alert(`Insufficient points! You need ${points} points, but only ${availablePoints} available.`);
-            return;
+        const isChecked = e.target.checked;
+
+        // If trying to check, validate points availability
+        if (isChecked && hasPoints) {
+            if (points > availablePoints) {
+                alert(`Insufficient points! You need ${points} points, but only ${availablePoints} available.`);
+                return;
+            }
         }
-        setSelectedPriceType(type);
+
+        setUseLoyaltyBenefit(isChecked);
     };
 
     const handleAddToCart = (e) => {
@@ -60,25 +62,42 @@ const ProductCard = ({ product }) => {
             return;
         }
 
-        const pointsToUse = 
-            (selectedPriceType === 'POINTS') ? points :
-            (selectedPriceType === 'LOYALTY' && hasPoints) ? points : 0;
+        // Determine priceType and pointsToUse based on checkbox state
+        let priceType = 'MRP';
+        let pointsToUse = 0;
 
-        if (pointsToUse > availablePoints) {
-            alert(`Insufficient points! You need ${pointsToUse} points, but only ${availablePoints} available.`);
-            return;
+        if (useLoyaltyBenefit) {
+            // Check points availability for points-based selections
+            if (hasPoints && points > availablePoints) {
+                alert(`Insufficient points! You need ${points} points, but only ${availablePoints} available.`);
+                return;
+            }
+
+            if (pricingCase === 'CASE_1') {
+                // Cardholder price + points
+                priceType = 'LOYALTY';
+                pointsToUse = points;
+            } else if (pricingCase === 'CASE_2') {
+                // Cardholder price only
+                priceType = 'LOYALTY';
+                pointsToUse = 0;
+            } else if (pricingCase === 'CASE_3') {
+                // Points only
+                priceType = 'POINTS';
+                pointsToUse = points;
+            }
         }
 
         addToCart({
             id: product.id,
             name: product.prodName,
-            price: selectedPriceType === 'MRP' ? mrp : (selectedPriceType === 'LOYALTY' ? cardPrice : mrp),
+            price: priceType === 'MRP' ? mrp : (priceType === 'LOYALTY' ? cardPrice : mrp),
             mrpPrice: mrp,
             cardholderPrice: cardPrice,
             pointsToBeRedeem: points,
             image: `${product.prodImagePath}`,
             quantity: 1
-        }, selectedPriceType, pointsToUse);
+        }, priceType, pointsToUse);
     };
 
     return (
@@ -111,69 +130,83 @@ const ProductCard = ({ product }) => {
                     </div>
                 </div>
 
-                {/* LOYALTY PRICING RADIOS */}
+                {/* LOYALTY PRICING CHECKBOX */}
                 {isLoyaltyUser && pricingCase !== 'MRP_ONLY' && (
                     <div className={styles.loyaltySection} onClick={(e) => e.stopPropagation()}>
                         <span className={styles.loyaltyTitle}>Special Offers</span>
                         
                         {pricingCase === 'CASE_1' && (
-                            <div className={styles.pricingOptions}>
-                                <div 
-                                    className={`${styles.priceOption} ${selectedPriceType === 'MRP' ? styles.selected : ''}`}
-                                    onClick={(e) => handlePriceTypeChange(e, 'MRP')}
-                                >
-                                    <input type="radio" checked={selectedPriceType === 'MRP'} readOnly />
-                                    <div className={styles.optionContent}>
-                                        <span className={styles.optionLabel}>MRP</span>
-                                        <span className={styles.optionPrice}>₹{mrp}</span>
-                                    </div>
+                            <>
+                                <div className={styles.mrpRow}>
+                                    <span>MRP:</span>
+                                    <span className={useLoyaltyBenefit ? styles.strikethrough : ''}>₹{mrp}</span>
                                 </div>
-                                <div 
-                                    className={`${styles.priceOption} ${selectedPriceType === 'LOYALTY' ? styles.selected : ''} ${points > availablePoints ? styles.disabled : ''}`}
-                                    onClick={(e) => handlePriceTypeChange(e, 'LOYALTY')}
-                                >
-                                    <input type="radio" checked={selectedPriceType === 'LOYALTY'} readOnly />
-                                    <div className={styles.optionContent}>
-                                        <span className={styles.optionLabel}>Cardholder + Pts</span>
-                                        <span className={styles.optionPrice}>₹{cardPrice} + {points} pts</span>
+                                <label className={`${styles.checkboxOption} ${points > availablePoints ? styles.disabled : ''}`}>
+                                    <input
+                                        type="checkbox"
+                                        checked={useLoyaltyBenefit}
+                                        onChange={handleCheckboxChange}
+                                        disabled={points > availablePoints}
+                                    />
+                                    <div className={styles.checkboxContent}>
+                                        <span className={styles.checkboxLabel}>
+                                            Save ₹{(mrp - cardPrice).toFixed(0)} + {points} pts
+                                        </span>
+                                        {useLoyaltyBenefit && (
+                                            <span className={styles.selectedPrice}>₹{cardPrice} + {points} pts</span>
+                                        )}
                                     </div>
-                                </div>
-                            </div>
+                                </label>
+                            </>
                         )}
 
                         {pricingCase === 'CASE_2' && (
-                            <div className={styles.autoApplyBox}>
-                                <span className={styles.autoApplyLabel}>Cardholder Price</span>
-                                <div>
-                                    <span className={styles.mrpStrikethrough}>₹{mrp}</span>
-                                    <span className={styles.autoApplyPrice}>₹{cardPrice}</span>
+                            <>
+                                <div className={styles.mrpRow}>
+                                    <span>MRP:</span>
+                                    <span className={useLoyaltyBenefit ? styles.strikethrough : ''}>₹{mrp}</span>
                                 </div>
-                            </div>
+                                <label className={styles.checkboxOption}>
+                                    <input
+                                        type="checkbox"
+                                        checked={useLoyaltyBenefit}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    <div className={styles.checkboxContent}>
+                                        <span className={styles.checkboxLabel}>
+                                            Save ₹{(mrp - cardPrice).toFixed(0)}
+                                        </span>
+                                        {useLoyaltyBenefit && (
+                                            <span className={styles.selectedPrice}>₹{cardPrice}</span>
+                                        )}
+                                    </div>
+                                </label>
+                            </>
                         )}
 
                         {pricingCase === 'CASE_3' && (
-                            <div className={styles.pricingOptions}>
-                                <div 
-                                    className={`${styles.priceOption} ${selectedPriceType === 'MRP' ? styles.selected : ''}`}
-                                    onClick={(e) => handlePriceTypeChange(e, 'MRP')}
-                                >
-                                    <input type="radio" checked={selectedPriceType === 'MRP'} readOnly />
-                                    <div className={styles.optionContent}>
-                                        <span className={styles.optionLabel}>MRP</span>
-                                        <span className={styles.optionPrice}>₹{mrp}</span>
-                                    </div>
+                            <>
+                                <div className={styles.mrpRow}>
+                                    <span>MRP:</span>
+                                    <span className={useLoyaltyBenefit ? styles.strikethrough : ''}>₹{mrp}</span>
                                 </div>
-                                <div 
-                                    className={`${styles.priceOption} ${selectedPriceType === 'POINTS' ? styles.selected : ''} ${points > availablePoints ? styles.disabled : ''}`}
-                                    onClick={(e) => handlePriceTypeChange(e, 'POINTS')}
-                                >
-                                    <input type="radio" checked={selectedPriceType === 'POINTS'} readOnly />
-                                    <div className={styles.optionContent}>
-                                        <span className={styles.optionLabel}>Redeem Points</span>
-                                        <span className={styles.optionPrice}>{points} pts</span>
+                                <label className={`${styles.checkboxOption} ${points > availablePoints ? styles.disabled : ''}`}>
+                                    <input
+                                        type="checkbox"
+                                        checked={useLoyaltyBenefit}
+                                        onChange={handleCheckboxChange}
+                                        disabled={points > availablePoints}
+                                    />
+                                    <div className={styles.checkboxContent}>
+                                        <span className={styles.checkboxLabel}>
+                                            Redeem {points} pts
+                                        </span>
+                                        {useLoyaltyBenefit && (
+                                            <span className={styles.selectedPrice}>{points} points</span>
+                                        )}
                                     </div>
-                                </div>
-                            </div>
+                                </label>
+                            </>
                         )}
                     </div>
                 )}

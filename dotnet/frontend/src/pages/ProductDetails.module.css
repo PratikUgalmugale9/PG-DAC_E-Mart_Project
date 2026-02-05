@@ -343,3 +343,95 @@
     font-size: 1.8rem;
     font-weight: 700;
 }
+
+/* CHECKBOX OPT-IN STYLES */
+.checkboxOption {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 12px;
+}
+
+.checkboxOption:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.checkboxOption input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.checkboxOption input[type="checkbox"]:checked {
+    accent-color: #10b981;
+}
+
+.checkboxOption.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f1f5f9;
+}
+
+.checkboxOption.disabled:hover {
+    border-color: #e2e8f0;
+    background: #f1f5f9;
+}
+
+.checkboxOption.disabled input[type="checkbox"] {
+    cursor: not-allowed;
+}
+
+.checkboxContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkboxLabel {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.selectedPricing {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    padding: 8px 12px;
+    background: #dcfce7;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.selectedPricing .cardholderPrice {
+    color: #166534;
+    font-size: 1.3rem;
+}
+
+.selectedPricing .pointsUsage {
+    color: #f59e0b;
+    font-size: 1rem;
+}
+
+.insufficientPoints {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
