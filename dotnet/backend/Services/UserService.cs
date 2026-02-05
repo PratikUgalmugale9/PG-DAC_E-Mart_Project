@@ -1,8 +1,8 @@
-using EMart.Data;
-using EMart.Models;
-using EMart.DTOs;
-using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
+using EMart.Data;
+using EMart.DTOs;
+using EMart.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EMart.Services
 {
@@ -33,6 +33,14 @@ namespace EMart.Services
                 throw new Exception("Email already registered");
             }
 
+            if (
+                !string.IsNullOrEmpty(user.Mobile)
+                && await _context.Users.AnyAsync(u => u.Mobile == user.Mobile)
+            )
+            {
+                throw new Exception("Mobile number already registered");
+            }
+
             user.Provider = "LOCAL";
             if (!string.IsNullOrEmpty(user.PasswordHash))
             {
@@ -43,11 +51,7 @@ namespace EMart.Services
             await _context.SaveChangesAsync();
 
             // Proactive Cart Creation
-            var cart = new Cart
-            {
-                UserId = user.Id,
-                IsActive = 'Y'
-            };
+            var cart = new Cart { UserId = user.Id, IsActive = 'Y' };
             _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
 
@@ -59,8 +63,8 @@ namespace EMart.Services
 
         public async Task<User?> LoginAsync(string email, string password)
         {
-            var user = await _context.Users
-                .Include(u => u.Cart)
+            var user = await _context
+                .Users.Include(u => u.Cart)
                 .FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
@@ -73,7 +77,10 @@ namespace EMart.Services
                 throw new Exception("Please login using Google");
             }
 
-            if (string.IsNullOrEmpty(user.PasswordHash) || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (
+                string.IsNullOrEmpty(user.PasswordHash)
+                || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)
+            )
             {
                 throw new Exception("Invalid credentials");
             }
@@ -83,8 +90,8 @@ namespace EMart.Services
 
         public async Task<User?> LoginWithGoogleAsync(string email, string fullName)
         {
-            var user = await _context.Users
-                .Include(u => u.Cart)
+            var user = await _context
+                .Users.Include(u => u.Cart)
                 .FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
@@ -94,27 +101,23 @@ namespace EMart.Services
                     Email = email,
                     FullName = fullName,
                     Provider = "GOOGLE",
-                    PasswordHash = null
+                    PasswordHash = null,
                 };
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
                 // Proactive Cart Creation
-                var cart = new Cart
-                {
-                    UserId = user.Id,
-                    IsActive = 'Y'
-                };
+                var cart = new Cart { UserId = user.Id, IsActive = 'Y' };
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
-                
+
                 // ✅ Trigger Registration Email for first-time Google user
                 await _emailService.SendRegistrationSuccessMailAsync(user);
 
                 // Refresh user to get cart
-                user = await _context.Users
-                    .Include(u => u.Cart)
+                user = await _context
+                    .Users.Include(u => u.Cart)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
 
