@@ -30,6 +30,12 @@ public class OrderItem {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "price_type", length = 10)
+    private String priceType = "MRP";
+
+    @Column(name = "points_used")
+    private Integer pointsUsed = 0;
+
     public OrderItem() {
     }
 
@@ -72,5 +78,21 @@ public class OrderItem {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
+    }
+
+    public Integer getPointsUsed() {
+        return pointsUsed;
+    }
+
+    public void setPointsUsed(Integer pointsUsed) {
+        this.pointsUsed = pointsUsed;
     }
 }

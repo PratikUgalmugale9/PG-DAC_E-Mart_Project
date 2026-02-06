@@ -5,6 +5,8 @@ public class CartItemRequestDTO {
     private Integer cartId;
     private Integer productId;
     private Integer quantity;
+    private String priceType = "MRP";
+    private Integer pointsUsed = 0;
 
     public Integer getCartId() {
         return cartId;
@@ -28,5 +30,21 @@ public class CartItemRequestDTO {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
+    }
+
+    public Integer getPointsUsed() {
+        return pointsUsed;
+    }
+
+    public void setPointsUsed(Integer pointsUsed) {
+        this.pointsUsed = pointsUsed;
     }
 }

@@ -2,19 +2,35 @@ package com.example.dto;
 
 import java.math.BigDecimal;
 
+/**
+ * Aligned with frontend requirements in CartContext.jsx
+ */
 public class CartItemResponseDTO {
 
-    private Integer cartItemId;
+    private Integer id; // Still kept for internal reference
     private Integer cartId;
+    private Integer cartItemId; // Expected by frontend for delete/update
     private Integer productId;
     private String productName;
-    private String prodImagePath;
+    private String prodImagePath; // Expected by frontend for images
     private Integer quantity;
-    private BigDecimal priceSnapshot;
+    private BigDecimal priceSnapshot; // Expected by frontend for calculations
     private BigDecimal mrpPrice;
     private BigDecimal cardholderPrice;
-    private Integer pointsToBeRedeem;
+    private Integer pointsToBeRedeem; // Expected by frontend
     private BigDecimal totalPrice;
+    private String priceType;
+    private Integer pointsUsed;
+
+    // Getters and Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+        this.cartItemId = id;
+    }
 
     public Integer getCartItemId() {
         return cartItemId;
@@ -45,8 +61,6 @@ public class CartItemResponseDTO {
     }
 
     public void setProductName(String productName) {
-        // ... (keep existing if needed, but I'll replace the block to ensure correct
-        // order)
         this.productName = productName;
     }
 
@@ -104,5 +118,21 @@ public class CartItemResponseDTO {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
+    }
+
+    public Integer getPointsUsed() {
+        return pointsUsed;
+    }
+
+    public void setPointsUsed(Integer pointsUsed) {
+        this.pointsUsed = pointsUsed;
     }
 }

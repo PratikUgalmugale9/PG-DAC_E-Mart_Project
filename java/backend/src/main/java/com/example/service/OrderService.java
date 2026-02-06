@@ -1,15 +1,17 @@
 package com.example.service;
 
-import com.example.entity.Ordermaster;
+import com.example.dto.OrderResponseDTO;
 import java.util.List;
 
 public interface OrderService {
 
-    Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode);
+    OrderResponseDTO placeOrderFromCart(Integer userId, Integer cartId, String paymentMode);
 
-    List<Ordermaster> getAllOrders();
+    List<OrderResponseDTO> getAllOrders();
 
-    Ordermaster getOrderById(Integer id);
+    OrderResponseDTO getOrderById(Integer id);
 
-    List<Ordermaster> getOrdersByUser(Integer userId);
+    List<OrderResponseDTO> getOrdersByUser(Integer userId);
+
+    com.example.entity.Ordermaster getOrderEntity(Integer id);
 }

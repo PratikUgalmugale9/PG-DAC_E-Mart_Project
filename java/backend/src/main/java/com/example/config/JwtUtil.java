@@ -12,21 +12,23 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    private final String SECRET_KEY = "emart_super_secret_key_1234567890_antigravity";
+    private final String ISSUER = "EMartBackend";
+    private final String AUDIENCE = "EMartUser";
+    private final long EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 hours (matches .NET default or typical)
 
-    private final String SECRET_KEY = "emart-secret-key-emart-secret-key-123456";
-    private final long EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour
-    private final Key key =
-            Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
+                .setIssuer(ISSUER)
+                .setAudience(AUDIENCE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-
 
     public boolean validateToken(String token) {
         try {

@@ -16,7 +16,7 @@ import com.example.entity.Loyaltycard;
 import com.example.service.LoyaltycardService;
 
 @RestController
-@RequestMapping("/api/loyaltycard")
+@RequestMapping({ "/api/loyaltycard", "/api/LoyaltyCard" })
 public class LoyaltycardController {
 
     @Autowired
@@ -32,6 +32,28 @@ public class LoyaltycardController {
         return userRepository.findByEmail(email)
                 .map(user -> loyaltycardService.getLoyaltycardByUserId(user.getId()))
                 .orElse(null); // Return null if user or card not found
+    }
+
+    @PostMapping("/signup")
+    public Loyaltycard signup(org.springframework.security.core.Authentication authentication) {
+        String email = authentication.getName();
+        com.example.entity.User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Loyaltycard card = loyaltycardService.getLoyaltycardByUserId(user.getId());
+        if (card != null) {
+            return card; // Already has a card
+        }
+
+        card = new Loyaltycard();
+        card.setUser(user);
+        card.setCardNumber("EM" + System.currentTimeMillis());
+        card.setIssuedDate(java.time.LocalDate.now());
+        card.setExpiryDate(java.time.LocalDate.now().plusYears(5));
+        card.setIsActive('Y');
+        card.setPointsBalance(100); // Bonus points
+
+        return loyaltycardService.createLoyaltycard(card);
     }
 
     // ===================== CREATE =====================

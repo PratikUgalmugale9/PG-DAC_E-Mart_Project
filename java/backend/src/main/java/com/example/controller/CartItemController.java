@@ -6,6 +6,7 @@ import com.example.entity.Cart;
 import com.example.entity.Cartitem;
 import com.example.entity.Product;
 import com.example.entity.User;
+import com.example.entity.Loyaltycard;
 import com.example.repository.CartItemRepository;
 import com.example.repository.CartRepository;
 import com.example.repository.ProductRepository;
@@ -36,46 +37,23 @@ public class CartItemController {
     @Autowired
     private UserRepository userRepository;
 
-    // @PostMapping("/add")
-    // public CartItemResponseDTO addCartItem(@RequestBody CartItemRequestDTO dto) {
-    //
-    // if (dto.getQuantity() == null || dto.getQuantity() <= 0) {
-    // throw new IllegalArgumentException("Quantity must be greater than 0");
-    // }
-    //
-    // Cart cart = cartRepository.findById(dto.getCartId())
-    // .orElseThrow(() -> new IllegalArgumentException("Cart not found!!!"));
-    //
-    // Product product = productRepository.findById(dto.getProductId())
-    // .orElseThrow(() ->
-    // new ResponseStatusException(
-    // HttpStatus.NOT_FOUND,
-    // "Product not found!!"
-    // )
-    // );
-    //
-    // // 🔑 CHECK IF PRODUCT ALREADY EXISTS IN CART
-    // Cartitem cartItem = cartItemRepository
-    // .findByCartIdAndProdId(cart.getId(), product.getId())
-    // .orElse(null);
-    //
-    // if (cartItem != null) {
-    // // ✅ DUPLICATE PRODUCT → INCREASE QUANTITY
-    // cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
-    // } else {
-    // // ✅ NEW PRODUCT
-    // cartItem = new Cartitem();
-    // cartItem.setCart(cart);
-    // cartItem.setProd(product);
-    // cartItem.setQuantity(dto.getQuantity());
-    // cartItem.setPriceSnapshot(product.getMrpPrice());
-    // }
-    //
-    // Cartitem saved = cartItemRepository.save(cartItem);
-    // return mapToResponseDTO(saved);
-    // }
+    @Autowired
+    private com.example.repository.LoyaltycardRepository loyaltycardRepository;
 
-    // new
+    private Loyaltycard getActiveLoyaltyCard(Integer userId) {
+        Loyaltycard card = loyaltycardRepository.findByUser_Id(userId);
+        if (card != null && (card.getIsActive() == 'Y' || card.getIsActive() == 'y')) {
+            return card;
+        }
+        return null;
+    }
+
+    private int getUsedPointsInCart(Integer cartId) {
+        return cartItemRepository.findByCart_Id(cartId).stream()
+                .mapToInt(ci -> ci.getPointsUsed() != null ? ci.getPointsUsed() : 0)
+                .sum();
+    }
+
     @PostMapping("/add")
     public CartItemResponseDTO addCartItem(
             @RequestBody CartItemRequestDTO dto,
@@ -98,29 +76,91 @@ public class CartItemController {
         Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        // Match .NET Logic
+        BigDecimal priceToUse;
+        int pointsToUse = 0;
+        String priceType = dto.getPriceType() != null ? dto.getPriceType().toUpperCase() : "MRP";
+
+        if (priceType.equals("MRP")) {
+            priceToUse = product.getMrpPrice();
+        } else if (priceType.equals("LOYALTY")) {
+            Loyaltycard loyaltyCard = getActiveLoyaltyCard(user.getId());
+            if (loyaltyCard == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Loyalty pricing requires an active loyalty card");
+            }
+            if (product.getCardholderPrice() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "This product does not have a cardholder price");
+            }
+            priceToUse = product.getCardholderPrice();
+
+            if (product.getPointsToBeRedeem() != null && product.getPointsToBeRedeem() > 0) {
+                pointsToUse = product.getPointsToBeRedeem() * dto.getQuantity();
+                int usedInCart = getUsedPointsInCart(cart.getId());
+                int availablePoints = (loyaltyCard.getPointsBalance() != null ? loyaltyCard.getPointsBalance() : 0)
+                        - usedInCart;
+
+                if (pointsToUse > availablePoints) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient loyalty points. Required: "
+                            + pointsToUse + ", Available: " + availablePoints);
+                }
+            }
+        } else if (priceType.equals("POINTS")) {
+            Loyaltycard loyaltyCard = getActiveLoyaltyCard(user.getId());
+            if (loyaltyCard == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Points redemption requires an active loyalty card");
+            }
+            if (product.getPointsToBeRedeem() == null || product.getPointsToBeRedeem() <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "This product cannot be purchased with points");
+            }
+
+            pointsToUse = product.getPointsToBeRedeem() * dto.getQuantity();
+            int usedInCart = getUsedPointsInCart(cart.getId());
+            int availablePoints = (loyaltyCard.getPointsBalance() != null ? loyaltyCard.getPointsBalance() : 0)
+                    - usedInCart;
+
+            if (pointsToUse > availablePoints) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Insufficient loyalty points. Required: " + pointsToUse + ", Available: " + availablePoints);
+            }
+            priceToUse = product.getMrpPrice();
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid price type: " + priceType);
+        }
+
         Cartitem cartItem = cartItemRepository
                 .findByCartIdAndProdId(cart.getId(), product.getId())
                 .orElse(null);
 
         if (cartItem != null) {
             cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
+            cartItem.setPriceSnapshot(priceToUse);
+            cartItem.setPriceType(priceType);
+            if (priceType.equals("POINTS") || (priceType.equals("LOYALTY") && product.getPointsToBeRedeem() != null
+                    && product.getPointsToBeRedeem() > 0)) {
+                cartItem.setPointsUsed(product.getPointsToBeRedeem() * cartItem.getQuantity());
+            } else {
+                cartItem.setPointsUsed(0);
+            }
         } else {
             cartItem = new Cartitem();
             cartItem.setCart(cart);
             cartItem.setProd(product);
             cartItem.setQuantity(dto.getQuantity());
-            cartItem.setPriceSnapshot(product.getMrpPrice());
+            cartItem.setPriceSnapshot(priceToUse);
+            cartItem.setPriceType(priceType);
+            cartItem.setPointsUsed(pointsToUse);
         }
 
         return mapToResponseDTO(cartItemRepository.save(cartItem));
     }
 
-    // new
     @GetMapping("/my")
     public List<CartItemResponseDTO> getMyCartItems(Authentication authentication) {
-
         String email = authentication.getName();
-
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -135,7 +175,6 @@ public class CartItemController {
                 .collect(Collectors.toList());
     }
 
-    // Secure update
     @PutMapping("/update/{id}")
     public CartItemResponseDTO updateCartItem(
             @PathVariable Integer id,
@@ -149,16 +188,36 @@ public class CartItemController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to update this cart item");
         }
 
-        if (dto.getQuantity() == null || dto.getQuantity() <= 0) {
+        int quantity = dto.getQuantity();
+        if (quantity <= 0) {
             throw new RuntimeException("Quantity must be greater than 0");
         }
 
-        cartItem.setQuantity(dto.getQuantity());
+        if (cartItem.getPriceType().equals("POINTS") ||
+                (cartItem.getPriceType().equals("LOYALTY") && cartItem.getProd().getPointsToBeRedeem() != null
+                        && cartItem.getProd().getPointsToBeRedeem() > 0)) {
 
+            User user = cartItem.getCart().getUser();
+            Loyaltycard loyaltyCard = getActiveLoyaltyCard(user.getId());
+            if (loyaltyCard != null) {
+                int newPointsRequired = cartItem.getProd().getPointsToBeRedeem() * quantity;
+                int currentUsedPoints = getUsedPointsInCart(cartItem.getCart().getId());
+                int pointsFromThisItem = cartItem.getPointsUsed() != null ? cartItem.getPointsUsed() : 0;
+                int availablePoints = (loyaltyCard.getPointsBalance() != null ? loyaltyCard.getPointsBalance() : 0)
+                        - currentUsedPoints + pointsFromThisItem;
+
+                if (newPointsRequired > availablePoints) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Insufficient loyalty points for this quantity.");
+                }
+                cartItem.setPointsUsed(newPointsRequired);
+            }
+        }
+
+        cartItem.setQuantity(quantity);
         return mapToResponseDTO(cartItemRepository.save(cartItem));
     }
 
-    // Secure delete
     @DeleteMapping("/delete/{id}")
     public String deleteCartItem(
             @PathVariable Integer id,
@@ -177,19 +236,27 @@ public class CartItemController {
 
     private CartItemResponseDTO mapToResponseDTO(Cartitem item) {
         CartItemResponseDTO dto = new CartItemResponseDTO();
+        dto.setId(item.getId());
         dto.setCartItemId(item.getId());
         dto.setCartId(item.getCart().getId());
         dto.setProductId(item.getProd().getId());
         dto.setProductName(item.getProd().getProdName());
         dto.setProdImagePath(item.getProd().getProdImagePath());
         dto.setQuantity(item.getQuantity());
-        dto.setPriceSnapshot(item.getPriceSnapshot());
-        dto.setMrpPrice(item.getProd().getMrpPrice());
+
+        // Defensive null health for prices to prevent NaN in frontend
+        BigDecimal price = item.getPriceSnapshot() != null ? item.getPriceSnapshot() : item.getProd().getMrpPrice();
+        if (price == null)
+            price = BigDecimal.ZERO;
+
+        dto.setPriceSnapshot(price);
+        dto.setMrpPrice(item.getProd().getMrpPrice() != null ? item.getProd().getMrpPrice() : BigDecimal.ZERO);
         dto.setCardholderPrice(item.getProd().getCardholderPrice());
         dto.setPointsToBeRedeem(item.getProd().getPointsToBeRedeem());
+        dto.setPriceType(item.getPriceType());
+        dto.setPointsUsed(item.getPointsUsed() != null ? item.getPointsUsed() : 0);
 
-        BigDecimal total = item.getPriceSnapshot().multiply(BigDecimal.valueOf(item.getQuantity()));
-        dto.setTotalPrice(total);
+        dto.setTotalPrice(price.multiply(BigDecimal.valueOf(item.getQuantity())));
 
         return dto;
     }

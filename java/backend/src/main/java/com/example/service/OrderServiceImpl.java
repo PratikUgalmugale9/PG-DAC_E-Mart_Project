@@ -9,12 +9,16 @@ import com.example.repository.CartItemRepository;
 import com.example.repository.OrderItemRepository;
 import com.example.repository.OrderRepository;
 import com.example.repository.UserRepository;
+import com.example.dto.OrderResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -23,29 +27,33 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final LoyaltycardService loyaltycardService;
+    private final EmailService emailService;
+    private final InvoicePdfService invoicePdfService;
 
-    // ✅ Constructor Injection
     public OrderServiceImpl(OrderRepository orderRepository,
             UserRepository userRepository,
             CartItemRepository cartItemRepository,
-            OrderItemRepository orderItemRepository) {
+            OrderItemRepository orderItemRepository,
+            LoyaltycardService loyaltycardService,
+            EmailService emailService,
+            InvoicePdfService invoicePdfService) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.cartItemRepository = cartItemRepository;
         this.orderItemRepository = orderItemRepository;
+        this.loyaltycardService = loyaltycardService;
+        this.emailService = emailService;
+        this.invoicePdfService = invoicePdfService;
     }
 
-    // ✅ MAIN METHOD: Place Order from Cart
     @Override
     @Transactional
-    public Ordermaster placeOrderFromCart(Integer userId, Integer cartId, String paymentMode) {
+    public OrderResponseDTO placeOrderFromCart(Integer userId, Integer cartId, String paymentMode) {
 
-        // ✅ Step 1: Check User exists
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // ✅ Step 2: Fetch all cart items
-        // Robustness: If cartId is null, try to get it from user
         if (cartId == null && user.getCart() != null) {
             cartId = user.getCart().getId();
         }
@@ -60,178 +68,133 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Cart is empty. Cannot place order.");
         }
 
-        // ✅ Step 3: Calculate Total Amount
         BigDecimal totalAmount = BigDecimal.ZERO;
-
-        for (Cartitem item : cartItems) {
-            // Defensive: if snapshot is null, fallback to current product price
-            BigDecimal price = item.getPriceSnapshot();
-            if (price == null) {
-                price = item.getProd().getCardholderPrice();
-            }
-
-            BigDecimal itemTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
-            totalAmount = totalAmount.add(itemTotal);
-        }
-        
-        
         int totalPointsRequired = 0;
 
         for (Cartitem item : cartItems) {
-            Integer productPoints = item.getProd().getPointsToBeRedeem();
+            BigDecimal price = item.getPriceSnapshot();
+            if (price == null) {
+                price = item.getProd().getMrpPrice();
+            }
+            totalAmount = totalAmount.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
 
+            Integer productPoints = item.getProd().getPointsToBeRedeem();
             if (productPoints != null && productPoints > 0) {
                 totalPointsRequired += productPoints * item.getQuantity();
             }
         }
 
-
-        // ✅ Step 4: Handle Points Redemption
         BigDecimal amountPaidByPoints = BigDecimal.ZERO;
-//        if (pointsToRedeem != null && pointsToRedeem.compareTo(BigDecimal.ZERO) > 0) {
-//            // Rule: 1 point = ₹1
-//            amountPaidByPoints = pointsToRedeem;
-//
-//            // Validate points against total amount
-//            if (amountPaidByPoints.compareTo(totalAmount) > 0) {
-//                amountPaidByPoints = totalAmount; // Cannot redeem more than the total
-//            }
-//
-//            // Deduct points from loyalty card
-//            try {
-//                loyaltycardService.updatePoints(userId, -amountPaidByPoints.intValue());
-//            } catch (Exception e) {
-//                throw new RuntimeException("Points redemption failed: " + e.getMessage());
-//            }
-//        }
-        
-       
-//		if (pointsToRedeem != null && pointsToRedeem.compareTo(BigDecimal.ZERO) > 0) {
-//
-//            Loyaltycard card = loyaltycardService.getLoyaltycardByUserId(userId);
-//
-//            if (card == null || card.getPointsBalance() <= 0) {
-//                throw new RuntimeException("No loyalty points available");
-//            }
-//
-//            int availablePoints = card.getPointsBalance();
-//
-//            if (pointsToRedeem.intValue() > availablePoints) {
-//                throw new RuntimeException(
-//                    "Insufficient loyalty points. Available: " + availablePoints
-//                );
-//            }
-//
-//            amountPaidByPoints = pointsToRedeem.min(totalAmount);
-//
-//            // Deduct points
-//            loyaltycardService.updatePoints(userId, -amountPaidByPoints.intValue());
-//        }
-
-       // BigDecimal amountPaidByPoints1 = BigDecimal.ZERO;
-
         if ("LOYALTY".equalsIgnoreCase(paymentMode)) {
-
             Loyaltycard card = loyaltycardService.getLoyaltycardByUserId(userId);
-
-            if (card == null) {
+            if (card == null)
                 throw new RuntimeException("Loyalty card not found");
-            }
-
             if (card.getPointsBalance() < totalPointsRequired) {
-                throw new RuntimeException(
-                    "Insufficient loyalty points. Required: " +
-                    totalPointsRequired + ", Available: " + card.getPointsBalance()
-                );
+                throw new RuntimeException("Insufficient loyalty points. Required: " + totalPointsRequired
+                        + ", Available: " + card.getPointsBalance());
             }
-
-            // 1 point = ₹1
             amountPaidByPoints = BigDecimal.valueOf(totalPointsRequired);
-
-            // Deduct points
             loyaltycardService.updatePoints(userId, -totalPointsRequired);
         }
 
-
         BigDecimal amountPaidByCash = totalAmount.subtract(amountPaidByPoints);
-       
+        if (amountPaidByCash.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Points-only purchase is not allowed. Please pay some amount by cash.");
+        }
 
-     // 🚫 BLOCK POINTS-ONLY PURCHASE (MANDATORY RULE)
-     if (amountPaidByCash.compareTo(BigDecimal.ZERO) <= 0) {
-         throw new RuntimeException(
-             "Points-only purchase is not allowed. Please pay some amount by cash."
-         );
-     }
-
-
-        // ✅ Step 5: Create OrderMaster
         Ordermaster ordermaster = new Ordermaster();
         ordermaster.setUser(user);
         ordermaster.setPaymentMode(paymentMode);
         ordermaster.setOrderStatus("Pending");
         ordermaster.setTotalAmount(totalAmount);
-        ordermaster.setItems(new ArrayList<>()); // Initialize the items list
+        ordermaster.setItems(new ArrayList<>());
 
-        // ✅ Step 5: Save OrderMaster
         Ordermaster savedOrder = orderRepository.save(ordermaster);
 
-        // ✅ Step 6: Create OrderItem list from cart items
         for (Cartitem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
             orderItem.setProduct(cartItem.getProd());
             orderItem.setQuantity(cartItem.getQuantity());
-
             BigDecimal itemPrice = cartItem.getPriceSnapshot();
-            if (itemPrice == null) {
-                itemPrice = cartItem.getProd().getCardholderPrice();
-            }
+            if (itemPrice == null)
+                itemPrice = cartItem.getProd().getMrpPrice();
             orderItem.setPrice(itemPrice);
-
-            // Maintain relationship in memory
+            orderItem.setPriceType(cartItem.getPriceType());
+            orderItem.setPointsUsed(cartItem.getPointsUsed());
             savedOrder.getItems().add(orderItem);
         }
 
-        // ✅ Step 7: Save all OrderItems
         orderItemRepository.saveAll(savedOrder.getItems());
-
-        // ✅ Step 8: Clear cart after order is placed
         cartItemRepository.deleteAll(cartItems);
-        
-     // ✅ Step 9: Add Loyalty Points (10% of total amount)
-        try {
-            int pointsEarned = totalAmount
-                    .multiply(BigDecimal.valueOf(0.10))
-                    .intValue(); // floor value
 
-            if (pointsEarned > 0) {
+        try {
+            int pointsEarned = totalAmount.multiply(BigDecimal.valueOf(0.10)).intValue();
+            if (pointsEarned > 0)
                 loyaltycardService.updatePoints(userId, pointsEarned);
-            }
         } catch (Exception e) {
-            // Do NOT rollback order for reward failure
             System.err.println("Loyalty points credit failed: " + e.getMessage());
         }
 
+        try {
+            byte[] invoicePdf = invoicePdfService.generateInvoicePdf(savedOrder, savedOrder.getItems());
+            emailService.sendPaymentSuccessMail(savedOrder, invoicePdf);
+        } catch (Exception e) {
+            System.err.println("Failed to send order email: " + e.getMessage());
+        }
 
-        return savedOrder;
+        return mapToOrderResponseDTO(savedOrder);
     }
 
-    // ✅ Get all orders (Admin)
-    @Override
-    public List<Ordermaster> getAllOrders() {
-        return orderRepository.findAll();
+    private OrderResponseDTO mapToOrderResponseDTO(Ordermaster order) {
+        OrderResponseDTO dto = new OrderResponseDTO();
+        dto.setOrderId(order.getId());
+        if (order.getOrderDate() != null) {
+            dto.setOrderDate(order.getOrderDate()
+                    .atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setOrderStatus(order.getOrderStatus());
+        dto.setPaymentMode(order.getPaymentMode());
+        if (order.getItems() != null) {
+            dto.setItems(order.getItems().stream().map(item -> {
+                OrderResponseDTO.OrderItemDTO itemDto = new OrderResponseDTO.OrderItemDTO();
+                itemDto.setProductId(item.getProduct().getId());
+                itemDto.setProductName(item.getProduct().getProdName());
+                itemDto.setQuantity(item.getQuantity());
+                itemDto.setUnitPrice(item.getPrice());
+                itemDto.setPriceType(item.getPriceType());
+                return itemDto;
+            }).collect(Collectors.toList()));
+        }
+        return dto;
     }
 
-    // ✅ Get order by orderId
     @Override
-    public Ordermaster getOrderById(Integer id) {
-        return orderRepository.findById(id)
+    public List<OrderResponseDTO> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(this::mapToOrderResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderResponseDTO getOrderById(Integer id) {
+        Ordermaster order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+        return mapToOrderResponseDTO(order);
     }
 
-    // ✅ Get user order history
     @Override
-    public List<Ordermaster> getOrdersByUser(Integer userId) {
-        return orderRepository.findByUserId(userId);
+    public List<OrderResponseDTO> getOrdersByUser(Integer userId) {
+        return orderRepository.findByUserId(userId).stream()
+                .map(this::mapToOrderResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Ordermaster getOrderEntity(Integer id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order entity not found with id: " + id));
     }
 }

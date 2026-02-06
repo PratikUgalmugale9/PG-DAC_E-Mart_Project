@@ -11,16 +11,16 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173") // 🔥 React support
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping({ "/api/products", "/api/Products" })
 public class ProductController {
 
     private final ProductService productService;
-    
+
     private ProductRepository productRepository;
-    
-    public ProductController(ProductService productService,ProductRepository productRepository) {
+
+    public ProductController(ProductService productService, ProductRepository productRepository) {
         this.productService = productService;
-        this.productRepository=productRepository;
+        this.productRepository = productRepository;
     }
 
     // CREATE or UPDATE product
@@ -57,13 +57,12 @@ public class ProductController {
         return ResponseEntity.ok(
                 productService.getProductsByCategory(categoryId));
     }
-    
-    
-    //for search
+
+    // for search
     @GetMapping("/search")
     public List<Product> searchProducts(@RequestParam String q) {
         return productRepository
-            .findByProdNameContainingIgnoreCase(q);
+                .findByProdNameContainingIgnoreCase(q);
     }
 
 }

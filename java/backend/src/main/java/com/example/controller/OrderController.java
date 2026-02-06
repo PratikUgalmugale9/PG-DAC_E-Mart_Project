@@ -1,7 +1,7 @@
 package com.example.controller;
 
+import com.example.dto.OrderResponseDTO;
 import com.example.dto.PlaceOrderRequest;
-import com.example.entity.Ordermaster;
 import com.example.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,7 @@ public class OrderController {
     }
 
     @PostMapping("/place")
-    public Ordermaster placeOrder(@RequestBody PlaceOrderRequest request) {
+    public OrderResponseDTO placeOrder(@RequestBody PlaceOrderRequest request) {
         return orderService.placeOrderFromCart(
                 request.getUserId(),
                 request.getCartId(),
@@ -27,17 +27,17 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Ordermaster> getAllOrders() {
+    public List<OrderResponseDTO> getAllOrders() {
         return orderService.getAllOrders();
     }
 
     @GetMapping("/{id}")
-    public Ordermaster getOrderById(@PathVariable Integer id) {
+    public OrderResponseDTO getOrderById(@PathVariable Integer id) {
         return orderService.getOrderById(id);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Ordermaster> getOrdersByUser(@PathVariable Integer userId) {
+    public List<OrderResponseDTO> getOrdersByUser(@PathVariable Integer userId) {
         return orderService.getOrdersByUser(userId);
     }
 }

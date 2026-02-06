@@ -34,7 +34,7 @@ public class InvoiceController {
     public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable Integer orderId) {
 
         // ✅ 1) Get OrderMaster
-        Ordermaster order = orderService.getOrderById(orderId);
+        Ordermaster order = orderService.getOrderEntity(orderId);
 
         // ✅ 2) Get OrderItems
         List<OrderItem> items = orderItemService.getItemsByOrderId(orderId);
