@@ -11,14 +11,14 @@ import java.util.List;
 @CrossOrigin
 public class OrderItemController {
 
-    private final OrderItemRepository orderItemRepository;
+    private final OrderItemService orderItemService;
 
-    public OrderItemController(OrderItemRepository orderItemRepository) {
-        this.orderItemRepository = orderItemRepository;
-    }
+public OrderItemController(OrderItemService orderItemService) {
+    this.orderItemService = orderItemService;
+}
 
-    @GetMapping("/order/{orderId}")
-    public List<OrderItem> getItemsByOrder(@PathVariable Integer orderId) {
-        return orderItemRepository.findByOrder_Id(orderId);
+@GetMapping("/order/{orderId}")
+public List<OrderItem> getItemsByOrder(@PathVariable Integer orderId) {
+    return orderItemService.getItemsByOrderId(orderId);
     }
 }
