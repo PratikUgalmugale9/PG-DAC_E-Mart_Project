@@ -15,6 +15,8 @@ public class CartItemResponseDTO {
     private BigDecimal cardholderPrice;
     private Integer pointsToBeRedeem;
     private BigDecimal totalPrice;
+    private String priceType;
+    private Integer pointsUsed;
 
     public Integer getCartItemId() {
         return cartItemId;
@@ -104,5 +106,21 @@ public class CartItemResponseDTO {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
+    }
+
+    public Integer getPointsUsed() {
+        return pointsUsed;
+    }
+
+    public void setPointsUsed(Integer pointsUsed) {
+        this.pointsUsed = pointsUsed;
     }
 }

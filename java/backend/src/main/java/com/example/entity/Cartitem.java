@@ -28,6 +28,18 @@ public class Cartitem {
     @Column(name = "PriceSnapshot", nullable = false, precision = 10, scale = 2)
     private BigDecimal priceSnapshot;
 
+    /**
+     * The pricing type selected: MRP, LOYALTY, or POINTS
+     */
+    @Column(name = "price_type", length = 10)
+    private String priceType = "MRP";
+
+    /**
+     * Number of loyalty points used for this item (0 if MRP or LOYALTY)
+     */
+    @Column(name = "points_used")
+    private Integer pointsUsed = 0;
+
     public Integer getId() {
         return id;
     }
@@ -66,6 +78,22 @@ public class Cartitem {
 
     public void setPriceSnapshot(BigDecimal priceSnapshot) {
         this.priceSnapshot = priceSnapshot;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
+    }
+
+    public Integer getPointsUsed() {
+        return pointsUsed;
+    }
+
+    public void setPointsUsed(Integer pointsUsed) {
+        this.pointsUsed = pointsUsed;
     }
 
 }

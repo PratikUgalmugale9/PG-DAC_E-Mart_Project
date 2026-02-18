@@ -5,6 +5,7 @@ public class CartItemRequestDTO {
     private Integer cartId;
     private Integer productId;
     private Integer quantity;
+    private String priceType = "MRP"; // Default to MRP
 
     public Integer getCartId() {
         return cartId;
@@ -28,5 +29,13 @@ public class CartItemRequestDTO {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(String priceType) {
+        this.priceType = priceType;
     }
 }

@@ -16,7 +16,7 @@ import com.example.entity.Loyaltycard;
 import com.example.service.LoyaltycardService;
 
 @RestController
-@RequestMapping("/api/loyaltycard")
+@RequestMapping({"/api/LoyaltyCard", "/api/loyaltycard"})  // Support both cases like .NET
 public class LoyaltycardController {
 
     @Autowired
@@ -32,6 +32,36 @@ public class LoyaltycardController {
         return userRepository.findByEmail(email)
                 .map(user -> loyaltycardService.getLoyaltycardByUserId(user.getId()))
                 .orElse(null); // Return null if user or card not found
+    }
+
+    // ===================== SIGNUP FOR LOYALTY CARD =====================
+    @PostMapping("/signup")
+    public Loyaltycard signup(org.springframework.security.core.Authentication authentication) {
+        String email = authentication.getName();
+        com.example.entity.User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Check if user already has a loyalty card
+        Loyaltycard existing = loyaltycardService.getLoyaltycardByUserId(user.getId());
+        if (existing != null) {
+            throw new RuntimeException("User already has a loyalty card");
+        }
+
+        // Create new loyalty card with 100 bonus points
+        Loyaltycard newCard = new Loyaltycard();
+        newCard.setUser(user);
+        newCard.setCardNumber(generateCardNumber());
+        newCard.setPointsBalance(100); // 100 bonus points
+        newCard.setIsActive('Y');
+        newCard.setIssuedDate(java.time.LocalDate.now());
+        newCard.setExpiryDate(java.time.LocalDate.now().plusYears(5));
+
+        return loyaltycardService.createLoyaltycard(newCard);
+    }
+
+    // Helper method to generate card number
+    private String generateCardNumber() {
+        return "LC" + System.currentTimeMillis();
     }
 
     // ===================== CREATE =====================
