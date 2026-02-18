@@ -10,7 +10,7 @@ namespace EMart.Controllers
     [Authorize]
     [ApiController]
     [Route("api/cart")] // Matches Java @RequestMapping("/api/cart")
-    public class CartController : ControllerBase
+    public class CartController : ControllerBase    
     {
         private readonly EMartDbContext _context;
 
